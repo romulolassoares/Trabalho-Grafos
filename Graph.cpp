@@ -133,7 +133,12 @@ void Graph::insertEdge(int id, int target_id, float weight) {
 void Graph::removeNode(int id) {}
 
 bool Graph::searchNode(int id) {
-    return false;
+    Node *node = this->getFirstNode();
+    while(node != nullptr) {
+        if(node->getId() == id)
+            return true;
+        node = node->getNextNode();
+    }
 }
 
 Node *Graph::getNode(int id) {
