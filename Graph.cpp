@@ -86,7 +86,7 @@ void Graph::insertNode(int id) {
         this->last_node = this->getFirstNode();
     } else {
         if(!this->searchNode(id)) {
-            next = this->first_node;
+            next = this->getFirstNode();
             // Procura o último nó inserido
             while (next != nullptr) {
                 aux = next;
@@ -141,19 +141,39 @@ Node *Graph::getNode(int id) {
 }
 
 //Function that prints a set of edges belongs breadth tree
-void Graph::breadthFirstSearch(ofstream &output_file) {}
+// void Graph::breadthFirstSearch(ofstream &output_file) {}
 
-float Graph::floydMarshall(int idSource, int idTarget) {}
+// float Graph::floydMarshall(int idSource, int idTarget) {}
 
-float Graph::dijkstra(int idSource, int idTarget) {}
+// float Graph::dijkstra(int idSource, int idTarget) {}
 
 //function that prints a topological sorting
-void topologicalSorting() {}
+// void topologicalSorting() {}
 
-void breadthFirstSearch(ofstream& output_file) {}
+// void breadthFirstSearch(ofstream& output_file) {}
 
-Graph* getVertexInduced(int* listIdNodes) {}
+// Graph* getVertexInduced(int* listIdNodes) {}
 
-Graph* agmKuskal() {}
+// Graph* agmKuskal() {}
 
-Graph* agmPrim() {}
+// Graph* agmPrim() {}
+
+void Graph::printGraph() {
+    Node *node = this->getFirstNode();
+    Edge *edge = nullptr;
+
+    cout << "Lista de adjacência" << endl;
+
+    while(node != nullptr) {
+        edge = node->getFirstEdge();
+        cout << node->getId() << " -> ";
+
+        while(edge != nullptr) {
+            cout << edge->getTargetId() << " - ";
+            edge = edge->getNextEdge();
+        }
+
+        cout << "null" << endl;
+        node = node->getNextNode();
+    }
+}
