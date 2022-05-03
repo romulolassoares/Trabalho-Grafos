@@ -139,6 +139,7 @@ bool Graph::searchNode(int id) {
             return true;
         node = node->getNextNode();
     }
+    return false;
 }
 
 Node *Graph::getNode(int id) {
@@ -149,6 +150,7 @@ Node *Graph::getNode(int id) {
             return node;
         node = node->getNextNode();
     }  
+    return nullptr;
 }
 
 //Function that prints a set of edges belongs breadth tree
