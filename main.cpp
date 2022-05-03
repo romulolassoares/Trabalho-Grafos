@@ -83,7 +83,7 @@ Graph* leituraInstancia(ifstream& input_file, int directed, int weightedEdge, in
     int numEdges;
 
     //Pegando a ordem do grafo
-    input_file >> order >> numEdges;
+    input_file >> order;
 
     //Criando objeto grafo
     Graph* graph = new Graph(order, directed, weightedEdge, weightedNode);
@@ -230,13 +230,18 @@ int main(int argc, char const *argv[]) {
 
     if(input_file.is_open()){
 
-        graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        cout << "Antes Leitura" << endl;
+        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        cout << "Depois Leitura" << endl;
+        graph->printGraph();
 
     }else
         cout << "Unable to open " << argv[1];
 
 
-    mainMenu(output_file, graph);
+    // mainMenu(output_file, graph);
+
+    
 
 
 

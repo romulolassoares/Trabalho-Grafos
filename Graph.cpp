@@ -76,34 +76,162 @@ Node *Graph::getLastNode() {
     The outdegree attribute of nodes is used as a counter for the number of edges in the graph.
     This allows the correct updating of the numbers of edges in the graph being directed or not.
 */
-void Graph::insertNode(int id) {}
+void Graph::insertNode(int id) {
+    Node *next;
+    Node *aux = nullptr;
 
-void Graph::insertEdge(int id, int target_id, float weight) {}
+    // Verifica se já existe algum nó
+    if(this->getFirstNode() == nullptr) {
+        this->first_node = new Node(id);
+        this->last_node = this->getFirstNode();
+    } else {
+        if(!this->searchNode(id)) {
+            next = this->getFirstNode();
+            // Procura o último nó inserido
+            while (next != nullptr) {
+                aux = next;
+                next = next->getNextNode();
+            }
+            // Inseri o nó na última posição
+            aux->setNextNode(new Node(id));
+            this->last_node = this->getNode(id);
+        }      
+    }
+}
+
+void Graph::insertEdge(int id, int target_id, float weight) {
+        // Procura se o nó id existe. Se não existir insere ele no grafo
+    if(!this->searchNode(id))
+        this->insertNode(id);
+    // Procura se o nó target_id existe. Se não existir insere ele no grafo
+    if(!this->searchNode(target_id))
+        this->insertNode(target_id);
+
+    Node *nodeId = this->getNode(id);
+    Node *nodeTargetId = this->getNode(target_id);
+
+    if(this->getDirected()) {
+        // Cria a aresta => id -> target_id
+        nodeId->insertEdge(target_id, weight);
+
+        // Aumenta os graus de saída e de entrada
+        nodeId->incrementOutDegree();
+        nodeTargetId->incrementInDegree();
+    } else {
+        // Cria a aresta => id - target_id
+        nodeId->insertEdge(target_id, weight);
+        nodeTargetId->insertEdge(id, weight);
+
+        // // Aumenta os graus de saída e de entrada
+        // nodeId->incrementOutDegree();
+        // nodeTargetId->incrementOutDegree();
+        // nodeId->incrementInDegree();
+        // nodeTargetId->incrementInDegree();
+    }
+}
 
 void Graph::removeNode(int id) {}
 
 bool Graph::searchNode(int id) {
+    Node *node = this->getFirstNode();
+    while(node != nullptr) {
+        if(node->getId() == id)
+            return true;
+        node = node->getNextNode();
+    }
     return false;
 }
 
 Node *Graph::getNode(int id) {
+    Node *node = this->getFirstNode();
+
+    while(node != nullptr) {
+        if(node->getId() == id)
+            return node;
+        node = node->getNextNode();
+    }  
     return nullptr;
 }
 
 //Function that prints a set of edges belongs breadth tree
-void Graph::breadthFirstSearch(ofstream &output_file) {}
+// void Graph::breadthFirstSearch(ofstream &output_file) {}
 
-float Graph::floydMarshall(int idSource, int idTarget) {}
+// float Graph::floydMarshall(int idSource, int idTarget) {}
 
-float Graph::dijkstra(int idSource, int idTarget) {}
+// float Graph::dijkstra(int idSource, int idTarget) {}
 
 //function that prints a topological sorting
-void topologicalSorting() {}
+// void topologicalSorting() {}
 
-void breadthFirstSearch(ofstream& output_file) {}
+// void breadthFirstSearch(ofstream& output_file) {}
 
-Graph* getVertexInduced(int* listIdNodes) {}
+// Graph* getVertexInduced(int* listIdNodes) {}
 
-Graph* agmKuskal() {}
+// Graph* agmKuskal() {}
 
-Graph* agmPrim() {}
+// Graph* agmPrim() {}
+
+void Graph::printGraph() {
+    Node *node = this->getFirstNode();
+    Edge *edge = nullptr;
+
+    cout << "Lista de adjacência" << endl;
+
+    if(this->getDirected()) {
+        if(this->getWeightedEdge()) {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -(" << edge->getWeight() << ")-> ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        } else {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -> ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        }
+    } else {
+        if(this->getWeightedEdge()) {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " - ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -(" << edge->getWeight() << ")- ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        } else {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " - ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        }
+    }
+}

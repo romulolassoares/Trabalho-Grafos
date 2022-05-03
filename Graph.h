@@ -56,8 +56,12 @@ class Graph {
         float greed();
         float greedRandom();
         float greedRactiveRandom();
+
+        //axiliar methods
+        void printGraph();
     private:
         //Auxiliar methods
+        void printDirectedGraph();
 };
 
 #endif // GRAPH_H_INCLUDED
