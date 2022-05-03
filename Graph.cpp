@@ -177,16 +177,61 @@ void Graph::printGraph() {
 
     cout << "Lista de adjacência" << endl;
 
-    while(node != nullptr) {
-        edge = node->getFirstEdge();
-        cout << node->getId() << " -> ";
+    if(this->getDirected()) {
+        if(this->getWeightedEdge()) {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
 
-        while(edge != nullptr) {
-            cout << edge->getTargetId() << " - ";
-            edge = edge->getNextEdge();
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -(" << edge->getWeight() << ")-> ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        } else {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -> ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
         }
+    } else {
+        if(this->getWeightedEdge()) {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " - ";
 
-        cout << "null" << endl;
-        node = node->getNextNode();
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " -(" << edge->getWeight() << ")- ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        } else {
+            while(node != nullptr) {
+                edge = node->getFirstEdge();
+                cout << node->getId() << " -> ";
+
+                while(edge != nullptr) {
+                    cout << edge->getTargetId() << " - ";
+                    edge = edge->getNextEdge();
+                }
+
+                cout << "null" << endl;
+                node = node->getNextNode();
+            }
+        }
     }
 }
