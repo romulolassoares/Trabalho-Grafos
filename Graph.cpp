@@ -235,3 +235,56 @@ void Graph::printGraph() {
         }
     }
 }
+
+
+void Graph::printGraphDot(ofstream& file) {
+    if(file.is_open()) {
+        cout << "Salvando o grafo" << endl;
+
+        Node *node = this->getFirstNode();
+        Edge *edge;
+
+        // Verifica se é ou não direcionado
+        if(this->getDirected()) {
+            file << "digraph { \n";
+        } else {
+            file << "strict graph { \n";
+        }
+
+        // Verifica se o nó tem peso
+        if(this->getWeightedNode()) {
+            while(node != nullptr) {
+                file << "   " << node->getId() << " [weight = ";
+                file << node->getWeight() << "] \n";
+                node = node->getNextNode();
+            }
+        }
+
+        node = this->getFirstNode();
+
+        while(node != nullptr) {
+            edge = node->getFirstEdge();
+            while(edge != nullptr) {
+                file << "   " << node->getId();
+                if(this->getDirected()) {
+                    file << "->" ;
+                } else {
+                    file << "--";
+                }
+                file << edge->getTargetId();
+
+                if(this->getWeightedEdge()) {
+                    file << " [label=" << edge->getWeight();
+                    file << ",weight=" << edge->getWeight() << "]";
+                }
+                file << "\n";
+                edge = edge->getNextEdge();
+            }
+            node = node->getNextNode();
+        }
+
+        file << "} \n";
+    } else {
+        cout << "Falha ao abrir o arquivo";
+    }
+}
