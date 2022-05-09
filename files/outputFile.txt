@@ -1,0 +1,10 @@
+digraph { 
+   0->2 [label=3,weight=3]
+   0->4 [label=1,weight=1]
+   0->5 [label=2,weight=2]
+   2->3 [label=6,weight=6]
+   2->4 [label=3,weight=3]
+   4->5 [label=7,weight=7]
+   1->4 [label=2,weight=2]
+   1->5 [label=4,weight=4]
+} 

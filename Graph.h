@@ -59,9 +59,9 @@ class Graph {
 
         //axiliar methods
         void printGraph();
+        void printGraphDot(ofstream& file);
     private:
         //Auxiliar methods
-        void printDirectedGraph();
 };
 
 #endif // GRAPH_H_INCLUDED
