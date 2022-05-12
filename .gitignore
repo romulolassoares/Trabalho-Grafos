@@ -3,3 +3,5 @@ execGrupoX
 
 *.png
 *.zip
+*.txt
+run.sh

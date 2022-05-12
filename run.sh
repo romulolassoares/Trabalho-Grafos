@@ -6,4 +6,4 @@ g++ *.c* -o execGrupoX
 
 #./execGrupoX <arquivo_entrada> <arquivo_saida> <Opc_Direc> <Opc_Peso_Aresta> <Opc_Peso_Nos>
  
-./execGrupoX ./files/inputFile.txt ./files/outputFile.txt 1 1 0
+./execGrupoX ./files/inputFile.txt ./files/outputFile.txt 0 1 0
