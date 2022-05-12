@@ -229,11 +229,13 @@ int main(int argc, char const *argv[]) {
     Graph* graph;
 
     if(input_file.is_open()){
-
-        cout << "Antes Leitura" << endl;
+        auto start = chrono::steady_clock::now();
         graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-        cout << "Depois Leitura" << endl;
-        graph->printGraph();
+        auto end = chrono::steady_clock::now();
+        cout << "Demorou  "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << " ms para ler o arquivo de entrada." << endl;
+        // graph->printGraph();
         graph->printGraphDot(output_file);
 
     }else
