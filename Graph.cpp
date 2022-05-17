@@ -106,12 +106,12 @@ void Graph::insertEdge(int id, int target_id, float weight) {
     // Procura se o nó id existe. Se não existir insere ele no grafo
     if (!this->searchNode(id)) {
         this->insertNode(id);
-        cout << "Inserindo " << id << endl;
+        // cout << "Inserindo " << id << endl;
     }
     // Procura se o nó target_id existe. Se não existir insere ele no grafo
     if (!this->searchNode(target_id)){
         this->insertNode(target_id);
-        cout << "Inserindo " << target_id << endl;
+        // cout << "Inserindo " << target_id << endl;
     }
 
     Node *nodeId = this->getNode(id);
@@ -221,7 +221,7 @@ int Graph::localClusteringCoefficient(int idNode) {
             edge = edge->getNextEdge();
         }
     }
-    cout << "Local Clustering Coefficient of " << idNode << " :" << ccValue << endl;
+    // cout << "Local Clustering Coefficient of " << idNode << " :" << ccValue << endl;
     return ccValue;
 }
 
@@ -240,6 +240,23 @@ int Graph::countNodeInAdjList(int idNode, int idToFind) {
         }
     }
     return value;
+}
+
+int Graph::averageClusteringCoefficient() {
+    Node *node = this->getFirstNode();
+    float ccValueTotal = 0;
+    int id;
+    float result;
+
+    while(node != nullptr) {
+        id = node->getId();
+        ccValueTotal += this->localClusteringCoefficient(id);
+        node = node->getNextNode();
+    }
+
+    result = ccValueTotal/this->getOrder();
+    
+    return result;
 }
 
 void Graph::printGraph() {

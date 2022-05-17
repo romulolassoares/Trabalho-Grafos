@@ -235,7 +235,7 @@ int main(int argc, char const *argv[]) {
         cout << "Demorou  "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms para ler o arquivo de entrada." << endl;
-        graph->printGraph();
+        // graph->printGraph();
         // graph->printGraphDot(output_file);
 
     }else
@@ -243,16 +243,16 @@ int main(int argc, char const *argv[]) {
 
 
     // mainMenu(output_file, graph);
-    // auto start1 = chrono::steady_clock::now();
-    graph->localClusteringCoefficient(5);
-    // auto end1 = chrono::steady_clock::now();
-    // cout << "Demorou  "
-    // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
-    // << " ms para calcular" << endl;
+
+    cout << "Coeficiente do nó 1: " << graph->localClusteringCoefficient(1) << endl;
+    cout << "Coeficiente do nó 2: " << graph->localClusteringCoefficient(2) << endl;
+    cout << "Coeficiente do nó 3: " << graph->localClusteringCoefficient(3) << endl;
+    cout << "Coeficiente do nó 4: " << graph->localClusteringCoefficient(4) << endl;
+    cout << "Coeficiente do nó 5: " << graph->localClusteringCoefficient(5) << endl;
+    cout << endl;
+    cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
+    cout << ") = " << graph->averageClusteringCoefficient() << endl;
     
-
-
-
     //Fechando arquivo de entrada
     input_file.close();
 
