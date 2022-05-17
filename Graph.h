@@ -42,6 +42,7 @@ class Graph {
         void removeNode(int id);
         bool searchNode(int id);
         Node* getNode(int id);
+        bool searchEdge(int id, int target_id);
 
         //methods phase1
         void topologicalSorting();
@@ -52,6 +53,7 @@ class Graph {
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
         int localClusteringCoefficient(int idNode);
+        // int localClusteringCoefficient(int idNode);
 
         //methods phase1
         float greed();

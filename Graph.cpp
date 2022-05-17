@@ -82,19 +82,16 @@ void Graph::insertNode(int id) {
     Node *aux = nullptr;
 
     // Verifica se já existe algum nó
-    if (this->getFirstNode() == nullptr)
-    {
+    if (this->getFirstNode() == nullptr) {
         this->first_node = new Node(id);
         this->last_node = this->getFirstNode();
     }
-    else
-    {
+    else {
         if (!this->searchNode(id))
         {
             next = this->getFirstNode();
             // Procura o último nó inserido
-            while (next != nullptr)
-            {
+            while (next != nullptr) {
                 aux = next;
                 next = next->getNextNode();
             }
@@ -107,17 +104,20 @@ void Graph::insertNode(int id) {
 
 void Graph::insertEdge(int id, int target_id, float weight) {
     // Procura se o nó id existe. Se não existir insere ele no grafo
-    if (!this->searchNode(id))
+    if (!this->searchNode(id)) {
         this->insertNode(id);
+        cout << "Inserindo " << id << endl;
+    }
     // Procura se o nó target_id existe. Se não existir insere ele no grafo
-    if (!this->searchNode(target_id))
+    if (!this->searchNode(target_id)){
         this->insertNode(target_id);
+        cout << "Inserindo " << target_id << endl;
+    }
 
     Node *nodeId = this->getNode(id);
     Node *nodeTargetId = this->getNode(target_id);
 
-    if (this->getDirected())
-    {
+    if (this->getDirected()) {
         // Cria a aresta => id -> target_id
         nodeId->insertEdge(target_id, weight);
 
@@ -125,17 +125,17 @@ void Graph::insertEdge(int id, int target_id, float weight) {
         nodeId->incrementOutDegree();
         nodeTargetId->incrementInDegree();
     }
-    else
-    {
+    else {
         // Cria a aresta => id - target_id
-        nodeId->insertEdge(target_id, weight);
-        nodeTargetId->insertEdge(id, weight);
-
-        // // Aumenta os graus de saída e de entrada
-        // nodeId->incrementOutDegree();
-        // nodeTargetId->incrementOutDegree();
-        // nodeId->incrementInDegree();
-        // nodeTargetId->incrementInDegree();
+        if(!this->searchEdge(id, target_id)) {
+            nodeId->insertEdge(target_id, weight);
+            nodeTargetId->insertEdge(id, weight);
+            // Aumenta os graus de saída e de entrada
+            nodeId->incrementOutDegree();
+            nodeTargetId->incrementOutDegree();
+            nodeId->incrementInDegree();
+            nodeTargetId->incrementInDegree();
+        }
     }
 }
 
@@ -143,8 +143,7 @@ void Graph::removeNode(int id) {}
 
 bool Graph::searchNode(int id) {
     Node *node = this->getFirstNode();
-    while (node != nullptr)
-    {
+    while (node != nullptr) {
         if (node->getId() == id)
             return true;
         node = node->getNextNode();
@@ -164,6 +163,21 @@ Node *Graph::getNode(int id) {
     return nullptr;
 }
 
+bool Graph::searchEdge(int id, int target_id) {
+    Node *node = this->getNode(id);
+    Node *targetNode = this->getNode(target_id);
+    Edge *edge = nullptr;
+
+    edge = node->getFirstEdge();
+    while(edge != nullptr) {
+        if(edge->getTargetId() == target_id) {
+            return true;
+        }
+        edge = edge->getNextEdge();	
+    }
+    
+    return false;
+}
 // Function that prints a set of edges belongs breadth tree
 //  void Graph::breadthFirstSearch(ofstream &output_file) {}
 
