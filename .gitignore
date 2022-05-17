@@ -1,6 +1,6 @@
 execGrupoX
 .vscode/
-files/
+# files/
 *.png
 *.zip
 *.txt
