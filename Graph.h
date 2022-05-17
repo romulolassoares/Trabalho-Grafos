@@ -51,6 +51,7 @@ class Graph {
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
+        int localClusteringCoefficient(int idNode);
 
         //methods phase1
         float greed();
@@ -62,6 +63,8 @@ class Graph {
         void printGraphDot(ofstream& file);
     private:
         //Auxiliar methods
+        bool searchListAdj(int idNode, int idToFind);
+        int countNodeInAdjList(int idNode, int idToFind);
 };
 
 #endif // GRAPH_H_INCLUDED
