@@ -23,6 +23,9 @@ class Graph {
         Node* first_node;
         Node* last_node;
 
+        // ponteiro para um array contendo as listas de adjacências
+	    list<pair<int, int> > * adj;
+
     public:
         //Constructor
         Graph(int order, bool directed, bool weighted_edge, bool weighted_node);

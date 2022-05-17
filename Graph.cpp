@@ -12,6 +12,8 @@
 #include <float.h>
 #include <iomanip>
 
+#define INFINITO 10000000
+
 using namespace std;
 
 /**************************************************************************************************
@@ -26,6 +28,8 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node) {
     this->weighted_node = weighted_node;
     this->first_node = this->last_node = nullptr;
     this->number_edges = 0;
+
+    adj = new list<pair<int, int> >[order];
 }
 
 // Destructor
@@ -158,7 +162,46 @@ Node *Graph::getNode(int id) {
 
 // float Graph::floydMarshall(int idSource, int idTarget) {}
 
-// float Graph::dijkstra(int idSource, int idTarget) {}
+float Graph::dijkstra(int idSource, int idTarget) {
+	int distancia[order];
+	
+    int visitados[order];
+	priority_queue < pair<int, int>,
+				   vector<pair<int, int> >, greater<pair<int, int> > > pq;
+	
+    for(int i = 0; i < order; i++)
+	{
+		distancia[i] = 1;
+		visitados[i] = false;
+	}
+	distancia[idSource] = 0;
+    int custo_aresta = 0;
+	// insere na fila
+	pq.push(make_pair(distancia[idSource], idSource));
+	while(!pq.empty())
+	{
+		pair<int, int> p = pq.top(); // tirando o pair do topo
+		int u = p.second; // obtém o vértice do pair
+		pq.pop(); // remove da fila
+		if(visitados[u] == false)
+		{
+			// marca como visitado
+			visitados[u] = true;
+			list<pair<int, int> >::iterator it;
+			for(it = adj[u].begin(); it != adj[u].end(); it++)
+			{
+				int v = it->first;
+				custo_aresta = it->second;
+				if(distancia[v] > (distancia[u] + custo_aresta))
+				{
+					distancia[v] = distancia[u] + custo_aresta;
+					pq.push(make_pair(distancia[v], v));
+				}
+			}
+		}
+	}
+	return distancia[idTarget];
+}
 
 //function that prints a topological sorting
 // void topologicalSorting() {}
