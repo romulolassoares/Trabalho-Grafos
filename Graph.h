@@ -23,9 +23,6 @@ class Graph {
         Node* first_node;
         Node* last_node;
 
-        // ponteiro para um array contendo as listas de adjacências
-	    list<pair<int, int> > * adj;
-
     public:
         //Constructor
         Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
@@ -49,6 +46,7 @@ class Graph {
         //methods phase1
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
+        void depthFirstSearch(ofstream& output_file, int id);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
@@ -63,6 +61,8 @@ class Graph {
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream& file);
+        void dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
+
     private:
         //Auxiliar methods
 };
