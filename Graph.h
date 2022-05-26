@@ -47,6 +47,7 @@ class Graph {
         //methods phase1
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
+        void depthFirstSearch(ofstream& output_file, int id);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
@@ -63,6 +64,8 @@ class Graph {
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream& file);
+        void dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
+
     private:
         //Auxiliar methods
         bool searchListAdj(int idNode, int idToFind);
