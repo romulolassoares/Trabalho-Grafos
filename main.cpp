@@ -236,7 +236,7 @@ int main(int argc, char const *argv[]) {
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms para ler o arquivo de entrada." << endl;
         // graph->printGraph();
-        // graph->printGraphDot(output_file);
+        graph->printGraphDot(output_file);
 
     }else
         cout << "Unable to open " << argv[1];
