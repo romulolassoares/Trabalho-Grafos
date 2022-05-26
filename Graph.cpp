@@ -12,6 +12,8 @@
 #include <float.h>
 #include <iomanip>
 
+#define INFINITO 10000000
+
 using namespace std;
 
 /**************************************************************************************************
@@ -19,7 +21,8 @@ using namespace std;
  **************************************************************************************************/
 
 // Constructor
-Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node) {
+Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
+{
     this->order = order;
     this->directed = directed;
     this->weighted_edge = weighted_edge;
@@ -29,7 +32,8 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node) {
 }
 
 // Destructor
-Graph::~Graph() {
+Graph::~Graph()
+{
     Node *next_node = this->first_node;
     while (next_node != nullptr)
     {
@@ -41,11 +45,13 @@ Graph::~Graph() {
 }
 
 // Getters
-int Graph::getOrder() {
+int Graph::getOrder()
+{
     return this->order;
 }
 
-int Graph::getNumberEdges() {
+int Graph::getNumberEdges()
+{
     return this->number_edges;
 }
 
@@ -64,11 +70,13 @@ bool Graph::getWeightedNode() {
     return this->weighted_node;
 }
 
-Node *Graph::getFirstNode() {
+Node *Graph::getFirstNode()
+{
     return this->first_node;
 }
 
-Node *Graph::getLastNode() {
+Node *Graph::getLastNode()
+{
     return this->last_node;
 }
 
@@ -77,7 +85,8 @@ Node *Graph::getLastNode() {
     The outdegree attribute of nodes is used as a counter for the number of edges in the graph.
     This allows the correct updating of the numbers of edges in the graph being directed or not.
 */
-void Graph::insertNode(int id) {
+void Graph::insertNode(int id)
+{
     Node *next;
     Node *aux = nullptr;
 
@@ -91,7 +100,8 @@ void Graph::insertNode(int id) {
         {
             next = this->getFirstNode();
             // Procura o último nó inserido
-            while (next != nullptr) {
+            while (next != nullptr)
+            {
                 aux = next;
                 next = next->getNextNode();
             }
@@ -141,7 +151,8 @@ void Graph::insertEdge(int id, int target_id, float weight) {
 
 void Graph::removeNode(int id) {}
 
-bool Graph::searchNode(int id) {
+bool Graph::searchNode(int id)
+{
     Node *node = this->getFirstNode();
     while (node != nullptr) {
         if (node->getId() == id)
@@ -151,7 +162,8 @@ bool Graph::searchNode(int id) {
     return false;
 }
 
-Node *Graph::getNode(int id) {
+Node *Graph::getNode(int id)
+{
     Node *node = this->getFirstNode();
 
     while (node != nullptr)
@@ -163,27 +175,117 @@ Node *Graph::getNode(int id) {
     return nullptr;
 }
 
-bool Graph::searchEdge(int id, int target_id) {
-    Node *node = this->getNode(id);
-    Node *targetNode = this->getNode(target_id);
-    Edge *edge = nullptr;
-
-    edge = node->getFirstEdge();
-    while(edge != nullptr) {
-        if(edge->getTargetId() == target_id) {
-            return true;
-        }
-        edge = edge->getNextEdge();	
-    }
-    
-    return false;
-}
 // Function that prints a set of edges belongs breadth tree
 //  void Graph::breadthFirstSearch(ofstream &output_file) {}
+void Graph::depthFirstSearch(ofstream &output_file, int id)
+{
+    list<Edge> arvore, retorno;
+
+    int *tempoDescobertaVertice = new int[this->getOrder()];
+    int *tempoFinalDescobertaVertice = new int[this->getOrder()];
+
+    int tempo = 0;
+
+    int *pai = new int[this->getOrder()];
+
+    for (int i = 0; i < this->getOrder(); i++)
+    {
+        tempoDescobertaVertice[i] = 0;
+        tempoFinalDescobertaVertice[i] = 0;
+        pai[i] = -1;
+    }
+
+    dfsRec(id, arvore, retorno, pai, tempo, tempoDescobertaVertice, tempoFinalDescobertaVertice);
+
+    list<Edge>::iterator it;
+    cout << "Arestas da árvore: " << endl;
+    for (it = arvore.begin(); it != arvore.end(); it++)
+    {
+        cout << "[" << (*it).getOrigem() << "---" << (*it).getTargetId() << "]" << endl;
+    }
+    cout << "Arestas de Retorno: " << endl;
+    for(it = retorno.begin(); it != retorno.end(); it++){
+        cout << "[" << (*it).getOrigem() << "---" << (*it).getTargetId() << "]" << endl;
+    }
+
+    // Deletando vetores
+    delete[] tempoDescobertaVertice;
+    delete[] tempoFinalDescobertaVertice;
+    delete[] pai;
+}
+
+void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal)
+{
+    tempo++;
+    tempoDescoberta[id] = tempo;
+    Node *no = getNode(id);
+
+    for (Edge *adj = no->getFirstEdge(); adj != nullptr; adj = adj->getNextEdge())
+    {
+        Edge aresta = Edge(adj->getTargetId());
+        aresta.setOrigem(id);
+
+        if (tempoDescoberta[adj->getTargetId()] == 0)
+        {
+            arvore.push_back(aresta);
+
+            pai[adj->getTargetId()] = id;
+
+            dfsRec(adj->getTargetId(), arvore, retorno, pai, tempo, tempoDescoberta, tempoFinal);
+        }
+        else
+        {
+            if ((tempoFinal[adj->getTargetId()] == 0) && (pai[id] != adj->getTargetId())){
+                retorno.push_back(aresta);
+            }
+        }
+    }
+    tempoFinal[id] = tempo;
+}
 
 // float Graph::floydMarshall(int idSource, int idTarget) {}
 
-// float Graph::dijkstra(int idSource, int idTarget) {}
+float Graph::dijkstra(int idSource, int idTarget)
+{
+    int distancia[order];
+
+    int visitados[order];
+    priority_queue<pair<int, int>,
+                   vector<pair<int, int>>, greater<pair<int, int>>>
+        pq;
+
+    for (int i = 0; i < order; i++)
+    {
+        distancia[i] = 1;
+        visitados[i] = false;
+    }
+    distancia[idSource] = 0;
+    int custo_aresta = 0;
+    // insere na fila
+    pq.push(make_pair(distancia[idSource], idSource));
+    while (!pq.empty())
+    {
+        pair<int, int> p = pq.top(); // tirando o pair do topo
+        int u = p.second;            // obtém o vértice do pair
+        pq.pop();                    // remove da fila
+        if (visitados[u] == false)
+        {
+            // marca como visitado
+            visitados[u] = true;
+            list<pair<int, int>>::iterator it;
+            {
+                int v = it->first;
+                custo_aresta = it->second;
+                if (distancia[v] > (distancia[u] + custo_aresta))
+                {
+                    distancia[v] = distancia[u] + custo_aresta;
+                    pq.push(make_pair(distancia[v], v));
+                }
+            }
+        }
+    }
+    return distancia[idTarget];
+}
 
 // function that prints a topological sorting
 //  void topologicalSorting() {}

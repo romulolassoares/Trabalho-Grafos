@@ -243,6 +243,7 @@ int main(int argc, char const *argv[]) {
 
 
     // mainMenu(output_file, graph);
+<<<<<<< HEAD
 
     cout << "Coeficiente do nó 1: " << graph->localClusteringCoefficient(1) << endl;
     cout << "Coeficiente do nó 2: " << graph->localClusteringCoefficient(2) << endl;
@@ -252,6 +253,17 @@ int main(int argc, char const *argv[]) {
     cout << endl;
     cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
     cout << ") = " << graph->averageClusteringCoefficient() << endl;
+=======
+    cout << "Caminhamento em profundidade: ";
+    graph->depthFirstSearch(output_file,1);
+    cout << endl;
+    // auto start1 = chrono::steady_clock::now();
+    graph->localClusteringCoefficient(5);
+    // auto end1 = chrono::steady_clock::now();
+    // cout << "Demorou  "
+    // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
+    // << " ms para calcular" << endl;
+>>>>>>> 650d12ace4dd85c9932aa4640ae26e39a8f93da4
     
     //Fechando arquivo de entrada
     input_file.close();
