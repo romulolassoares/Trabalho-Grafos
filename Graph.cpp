@@ -11,6 +11,7 @@
 #include <ctime>
 #include <float.h>
 #include <iomanip>
+#include <limits>
 
 #define INFINITO 10000000
 
@@ -251,42 +252,46 @@ void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, in
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
-    int distancia[order];
+    float infinito = std::numeric_limits<int>::max();
+    bool visitados[this->order];
+    int distancia[this->order];
+    int gravaCaminho[this->order];
 
-    int visitados[order];
-    priority_queue<pair<int, int>,
-                   vector<pair<int, int>>, greater<pair<int, int>>>
-        pq;
-
-    for (int i = 0; i < order; i++)
-    {
-        distancia[i] = 1;
+    for(int i = 0; i < this->order; i++){
+        distancia[i] = infinito;
         visitados[i] = false;
+        gravaCaminho[i] = idSource;
     }
+
     distancia[idSource] = 0;
-    int custo_aresta = 0;
-    // insere na fila
-    pq.push(make_pair(distancia[idSource], idSource));
-    while (!pq.empty())
-    {
-        pair<int, int> p = pq.top(); // tirando o pair do topo
-        int u = p.second;            // obtém o vértice do pair
-        pq.pop();                    // remove da fila
-        if (visitados[u] == false)
-        {
-            // marca como visitado
-            visitados[u] = true;
-            list<pair<int, int>>::iterator it;
-            {
-                int v = it->first;
-                custo_aresta = it->second;
-                if (distancia[v] > (distancia[u] + custo_aresta))
-                {
-                    distancia[v] = distancia[u] + custo_aresta;
-                    pq.push(make_pair(distancia[v], v));
+    visitados[idSource] = true;
+
+    Node* no = this->getNode(idSource);
+    for(Edge* edge = no->getFirstEdge(); edge != nullptr; edge = edge->getNextEdge()){
+        distancia[edge->getTargetId()] = edge->getWeight();
+    }
+
+    for(int i = 0; i < this->order - 1; i++){
+        int j = minimalDistance(visitados, distancia);
+        if(j == idTarget)
+            continue;
+        visitados[j] = true;
+
+        for (int k = 0; k < this->order; k++) {
+            Node* actualnode = getNode(j);
+            if(!visitados[k] && distancia[j] != infinito && actualnode->hasEdgeBetween(k)){
+                Edge* edgeBetween = actualnode->getEdge(k);
+
+                if(distancia[j] + edgeBetween->getWeight() < distancia[k]){
+                    distancia[k] = distancia[j] + edgeBetween->getWeight();
+                    gravaCaminho[k] = j;
                 }
             }
         }
+        
+    }
+    for(int i = 0; i < this->order; i++){
+        cout << distancia[i] << endl;
     }
     return distancia[idTarget];
 }
@@ -301,6 +306,19 @@ float Graph::dijkstra(int idSource, int idTarget)
 // Graph* agmKuskal() {}
 
 // Graph* agmPrim() {}
+
+int Graph::minimalDistance(bool visitados[], int distance[]){
+    int min = numeric_limits<int>::max();
+
+    int menorId;
+    for(int i = 0; i< this->order; i++){
+        if(!visitados[i] && distance[i]<=min){
+            min = distance[i];
+            menorId = i;
+        }
+    }
+    return menorId;
+}
 
 void Graph::printGraph()
 {

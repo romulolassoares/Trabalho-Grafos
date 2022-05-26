@@ -61,6 +61,7 @@ class Graph {
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream& file);
+        int minimalDistance(bool visitados[], int distance[]);
         void dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
 
     private:

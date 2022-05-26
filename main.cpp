@@ -243,8 +243,7 @@ int main(int argc, char const *argv[]) {
 
 
     // mainMenu(output_file, graph);
-    cout << "Caminhamento em profundidade: ";
-    graph->depthFirstSearch(output_file,1);
+    cout << "Dijkstra: " << graph->dijkstra(1,5);
     cout << endl;
 
 

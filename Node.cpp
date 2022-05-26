@@ -153,6 +153,18 @@ bool Node::searchEdge(int target_id) {
     return false;
 }
 
+// Function searchEdge modified for return the edge
+Edge* Node::getEdge(int target_id) {
+     // Verifies whether there are at least one edge in the node
+    if(this->first_edge != nullptr) {
+        // Searching for a specific edge of target id equal to target id
+        for(Edge* aux = this->first_edge; aux != nullptr; aux = aux->getNextEdge())
+            if(aux->getTargetId() == target_id)
+                return aux;
+    }
+    return nullptr;
+}
+
 void Node::incrementInDegree() {
     this->in_degree++;
 }
