@@ -54,7 +54,7 @@ class Graph {
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
         int localClusteringCoefficient(int idNode);
-        // int localClusteringCoefficient(int idNode);
+        int averageClusteringCoefficient();
 
         //methods phase1
         float greed();

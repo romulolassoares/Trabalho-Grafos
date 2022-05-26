@@ -235,14 +235,25 @@ int main(int argc, char const *argv[]) {
         cout << "Demorou  "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms para ler o arquivo de entrada." << endl;
-        graph->printGraph();
-        // graph->printGraphDot(output_file);
+        // graph->printGraph();
+        graph->printGraphDot(output_file);
 
     }else
         cout << "Unable to open " << argv[1];
 
 
     // mainMenu(output_file, graph);
+<<<<<<< HEAD
+
+    cout << "Coeficiente do nó 1: " << graph->localClusteringCoefficient(1) << endl;
+    cout << "Coeficiente do nó 2: " << graph->localClusteringCoefficient(2) << endl;
+    cout << "Coeficiente do nó 3: " << graph->localClusteringCoefficient(3) << endl;
+    cout << "Coeficiente do nó 4: " << graph->localClusteringCoefficient(4) << endl;
+    cout << "Coeficiente do nó 5: " << graph->localClusteringCoefficient(5) << endl;
+    cout << endl;
+    cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
+    cout << ") = " << graph->averageClusteringCoefficient() << endl;
+=======
     cout << "Caminhamento em profundidade: ";
     graph->depthFirstSearch(output_file,1);
     cout << endl;
@@ -252,10 +263,8 @@ int main(int argc, char const *argv[]) {
     // cout << "Demorou  "
     // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
     // << " ms para calcular" << endl;
+>>>>>>> 650d12ace4dd85c9932aa4640ae26e39a8f93da4
     
-
-
-
     //Fechando arquivo de entrada
     input_file.close();
 
