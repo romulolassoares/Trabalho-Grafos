@@ -42,15 +42,19 @@ class Graph {
         void removeNode(int id);
         bool searchNode(int id);
         Node* getNode(int id);
+        bool searchEdge(int id, int target_id);
 
         //methods phase1
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
+        void depthFirstSearch(ofstream& output_file, int id);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
+        int localClusteringCoefficient(int idNode);
+        int averageClusteringCoefficient();
 
         //methods phase1
         float greed();
@@ -60,8 +64,12 @@ class Graph {
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream& file);
+        void dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
+
     private:
         //Auxiliar methods
+        bool searchListAdj(int idNode, int idToFind);
+        int countNodeInAdjList(int idNode, int idToFind);
 };
 
 #endif // GRAPH_H_INCLUDED

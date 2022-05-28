@@ -1,4 +1,5 @@
 strict graph { 
+<<<<<<< HEAD
    73--26 [label=29,weight=29]
    73--45 [label=4,weight=4]
    73--14 [label=35,weight=35]
@@ -2499,4 +2500,26 @@ strict graph {
    14--78 [label=55,weight=55]
    14--17 [label=19,weight=19]
    14--102 [label=15,weight=15]
+=======
+   0--3 [label=0,weight=0]
+   0--4 [label=8,weight=8]
+   3--0 [label=0,weight=0]
+   3--2 [label=5,weight=5]
+   3--9 [label=4,weight=4]
+   3--5 [label=3,weight=3]
+   4--0 [label=8,weight=8]
+   4--7 [label=8,weight=8]
+   1--2 [label=1,weight=1]
+   2--1 [label=1,weight=1]
+   2--3 [label=5,weight=5]
+   2--6 [label=2,weight=2]
+   6--2 [label=2,weight=2]
+   6--5 [label=5,weight=5]
+   6--7 [label=7,weight=7]
+   9--3 [label=4,weight=4]
+   5--3 [label=3,weight=3]
+   5--6 [label=5,weight=5]
+   7--4 [label=8,weight=8]
+   7--6 [label=7,weight=7]
+>>>>>>> 6d1dc99ddfe6114fc56b330768adae0e00279d1b
 } 
