@@ -235,8 +235,8 @@ int main(int argc, char const *argv[]) {
         cout << "Demorou  "
         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
         << " ms para ler o arquivo de entrada." << endl;
-        // graph->printGraph();
-        graph->printGraphDot(output_file);
+        graph->printGraph();
+        // graph->printGraphDot(output_file);
 
     }else
         cout << "Unable to open " << argv[1];
@@ -245,6 +245,13 @@ int main(int argc, char const *argv[]) {
     // mainMenu(output_file, graph);
     cout << "Dijkstra: " << graph->dijkstra(1,5);
     cout << endl;
+    // auto start1 = chrono::steady_clock::now();
+    //graph->localClusteringCoefficient(5);
+    // auto end1 = chrono::steady_clock::now();
+    // cout << "Demorou  "
+    // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
+    // << " ms para calcular" << endl;
+    
 
 
 
