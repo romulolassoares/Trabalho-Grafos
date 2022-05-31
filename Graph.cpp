@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <limits>
 
-#define INFINITO 10000000
+#define INFINITO std::numeric_limits<int>::max()
 
 using namespace std;
 
@@ -176,9 +176,22 @@ Node *Graph::getNode(int id)
     return nullptr;
 }
 
-bool Graph::searchEdge(int id, int target_id){
-    return true;
+bool Graph::searchEdge(int id, int target_id) {
+    Node *node = this->getNode(id);
+    Node *targetNode = this->getNode(target_id);
+    Edge *edge = nullptr;
+
+    edge = node->getFirstEdge();
+    while(edge != nullptr) {
+        if(edge->getTargetId() == target_id) {
+            return true;
+        }
+        edge = edge->getNextEdge();	
+    }
+
+    return false;
 }
+
 // Function that prints a set of edges belongs breadth tree
 //  void Graph::breadthFirstSearch(ofstream &output_file) {}
 void Graph::depthFirstSearch(ofstream &output_file, int id)
@@ -251,13 +264,12 @@ void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, in
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
-    float infinito = std::numeric_limits<int>::max();
     bool visitados[this->order];
     int distancia[this->order];
     int gravaCaminho[this->order];
 
     for(int i = 0; i < this->order; i++){
-        distancia[i] = infinito;
+        distancia[i] = INFINITO;
         visitados[i] = false;
         gravaCaminho[i] = idSource;
     }
@@ -267,35 +279,87 @@ float Graph::dijkstra(int idSource, int idTarget)
     Node* no = this->getNode(idSource);
     
     for(Edge* edge = no->getFirstEdge(); edge != NULL; edge = edge->getNextEdge()){
-        cout << "Peso: " << edge->getWeight() << endl;
         distancia[edge->getTargetId()] = edge->getWeight();
     }
 
     for(int i = 0; i < this->order - 1; i++){
         int j = minimalDistance(visitados, distancia);
-        if(j == idTarget)
+        if(j == idTarget){
             continue;
+        }
         visitados[j] = true;
 
         for (int k = 0; k < this->order; k++) {
             Node* actualnode = getNode(j);
-            if(!visitados[k] && distancia[j] != infinito && actualnode->hasEdgeBetween(k)){
+            if(!visitados[k] && distancia[j] != INFINITO && actualnode->hasEdgeBetween(k)){
                 Edge* edgeBetween = actualnode->getEdge(k);
 
                 if(distancia[j] + edgeBetween->getWeight() < distancia[k]){
-                    cout << "Atualizando distancia: " << distancia[j] + edgeBetween->getWeight()<<endl;
                     distancia[k] = distancia[j] + edgeBetween->getWeight();
                     gravaCaminho[k] = j;
+                    cout << "GRAVA CAMINHO: " << gravaCaminho[k] << endl;
                 }
             }
         }
         
     }
+    /* if (dist[mapeamento(map, idDest)] != -1)
+    {
+        int *guarda = new int[this->getOrder()];
+        int i=0;
+        guarda[i]=idDest;
+        i++;
+
+        int path = noAnterior[mapeamento(map, idDest)];
+        //percorre o vetor de nós a percorrer até que encontre uma posição igual a -1
+        while (path != -1)
+        {
+            guarda[i]=path;
+
+            path = noAnterior[mapeamento(map, path)];
+            i++;
+        }
+        i--;
+        cout << "[";
+        while(i>=0)
+        {
+            if(i!=0){
+                cout << guarda[i]<<", ";
+            }
+            else{
+                cout << guarda[i];
+            }
+            i--;
+        }
+        cout << "] - "<< dist[mapeamento(map, idDest)] << endl;
+    }
+    else
+    {
+        cout << "[" << idOrig << ", " << idDest << "] - -1 Nao ha caminho";
+    }
+    cout << "--------------------------------------------------------------------" << endl;*/
+
+    ofstream arq("files/outputFile.txt", ios::out | ios::in);
+    printGraphDot(arq);
     for(int i = 0; i < this->order; i++){
-        cout << distancia[i] << endl;
+        cout << "Distancia de " << idSource << " até " << i << ": "<< distancia[i] << endl;
+        cout << "Grava caminho: " << gravaCaminho[i] << endl;        
     }
     return distancia[idTarget];
 }
+
+
+
+int Graph::mapeamento(int *map, int id)
+{
+    for (int i = 0; i < this->getOrder(); i++)
+    {
+        if (map[i] == id)
+            return i;
+    }
+    return -1;
+}
+
 
 // function that prints a topological sorting
 //  void topologicalSorting() {}
@@ -309,7 +373,7 @@ float Graph::dijkstra(int idSource, int idTarget)
 // Graph* agmPrim() {}
 
 int Graph::minimalDistance(bool visitados[], int distance[]){
-    int min = numeric_limits<int>::max();
+    int min = INFINITO;
 
     int menorId;
     for(int i = 0; i< this->order; i++){
@@ -444,7 +508,7 @@ void Graph::printGraph() {
 
 void Graph::printGraphDot(ofstream &file) {
     if (file.is_open()) {
-        cout << "Salvando o grafo" << endl;
+        //cout << "Salvando o grafo" << endl;
 
         Node *node = this->getFirstNode();
         Edge *edge;
