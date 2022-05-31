@@ -243,11 +243,11 @@ int main(int argc, char const *argv[]) {
 
 
     // mainMenu(output_file, graph);
-    cout << "Dijkstra: " << graph->dijkstra(0,1);
+    cout << "Dijkstra: " << graph->dijkstra(1,5);
     cout << endl;
-    /* cout << "CAminhamento: ";
-    graph->depthFirstSearch(output_file,0);
-    cout << endl; */
+    cout << "Caminhamento: ";
+    graph->depthFirstSearch(output_file,1);
+    cout << endl;
     // auto start1 = chrono::steady_clock::now();
     //graph->localClusteringCoefficient(5);
     // auto end1 = chrono::steady_clock::now();

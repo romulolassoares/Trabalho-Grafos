@@ -212,7 +212,7 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
         pai[i] = -1;
     }
 
-    dfsRec(id, arvore, retorno, pai, tempo, tempoDescobertaVertice, tempoFinalDescobertaVertice);
+    depthFirstSearchRec(id, arvore, retorno, pai, tempo, tempoDescobertaVertice, tempoFinalDescobertaVertice);
 
     list<Edge>::iterator it;
     cout << "Arestas da árvore: " << endl;
@@ -231,7 +231,7 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
     delete[] pai;
 }
 
-void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal)
+void Graph::depthFirstSearchRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal)
 {
     tempo++;
     tempoDescoberta[id] = tempo;
@@ -248,7 +248,7 @@ void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, in
 
             pai[adj->getTargetId()] = id;
 
-            dfsRec(adj->getTargetId(), arvore, retorno, pai, tempo, tempoDescoberta, tempoFinal);
+            depthFirstSearchRec(adj->getTargetId(), arvore, retorno, pai, tempo, tempoDescoberta, tempoFinal);
         }
         else
         {
@@ -289,7 +289,7 @@ float Graph::dijkstra(int idSource, int idTarget)
         }
         visitados[j] = true;
 
-        for (int k = 0; k < this->order; k++) {
+        for (int k = 0; k <= this->order; k++) {
             Node* actualnode = getNode(j);
             if(!visitados[k] && distancia[j] != INFINITO && actualnode->hasEdgeBetween(k)){
                 Edge* edgeBetween = actualnode->getEdge(k);
@@ -297,7 +297,6 @@ float Graph::dijkstra(int idSource, int idTarget)
                 if(distancia[j] + edgeBetween->getWeight() < distancia[k]){
                     distancia[k] = distancia[j] + edgeBetween->getWeight();
                     gravaCaminho[k] = j;
-                    cout << "GRAVA CAMINHO: " << gravaCaminho[k] << endl;
                 }
             }
         }
@@ -341,9 +340,8 @@ float Graph::dijkstra(int idSource, int idTarget)
 
     ofstream arq("files/outputFile.txt", ios::out | ios::in);
     printGraphDot(arq);
-    for(int i = 0; i < this->order; i++){
+    for(int i = 0; i <= this->order; i++){
         cout << "Distancia de " << idSource << " até " << i << ": "<< distancia[i] << endl;
-        cout << "Grava caminho: " << gravaCaminho[i] << endl;        
     }
     return distancia[idTarget];
 }
