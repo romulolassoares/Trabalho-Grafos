@@ -1,5 +1,7 @@
 execGrupoX
 .vscode/
-
+# files/
 *.png
 *.zip
+*.txt
+run.sh
