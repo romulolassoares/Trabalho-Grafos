@@ -53,8 +53,8 @@ class Graph {
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
-        int localClusteringCoefficient(int idNode);
-        int averageClusteringCoefficient();
+        float localClusteringCoefficient(int idNode);
+        float averageClusteringCoefficient();
 
         //methods phase1
         float greed();

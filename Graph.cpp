@@ -149,6 +149,22 @@ void Graph::insertEdge(int id, int target_id, float weight) {
     }
 }
 
+bool Graph::searchEdge(int id, int target_id) {
+    Node *node = this->getNode(id);
+    Node *targetNode = this->getNode(target_id);
+    Edge *edge = nullptr;
+
+    edge = node->getFirstEdge();
+    while(edge != nullptr) {
+        if(edge->getTargetId() == target_id) {
+            return true;
+        }
+        edge = edge->getNextEdge();	
+    }
+
+    return false;
+}
+
 void Graph::removeNode(int id) {}
 
 bool Graph::searchNode(int id)
@@ -314,32 +330,58 @@ float Graph::dijkstra(int idSource, int idTarget)
 
 // Graph* agmPrim() {}
 
-int Graph::localClusteringCoefficient(int idNode) {
+float Graph::localClusteringCoefficient(int idNode) {
     Node *node = this->getNode(idNode);
     Node *node2 = nullptr;
     Edge *edge = nullptr;
     Edge *edge2 = nullptr;
-    int ccValue = 0;
+    float ccValue = 0;
+    float dv = 0;
+    float P = 0;
 
-    if (node != nullptr) {
+    if(node != nullptr) {
+        dv = node->getInDegree();
         edge = node->getFirstEdge();
-        int idEdge;
-        // Percorre a lista de adjacencia do nó idNode
-        while (edge != nullptr) {
+        float idEdge;
+        while(edge != nullptr) {
             idEdge = edge->getTargetId();
             node2 = this->getNode(idEdge);
             // Acessa a lista de adj da lista de adj de idNode
             if (node2 != nullptr) {
                 edge2 = node2->getFirstEdge();
                 while(edge2 != nullptr) {
-                    ccValue += this->countNodeInAdjList(edge2->getTargetId(), idNode);
+                    P += this->countNodeInAdjList(edge2->getTargetId(), idNode);
+                    // cout << P << endl;
                     edge2 = edge2->getNextEdge();
                 }
             }
             edge = edge->getNextEdge();
         }
     }
-    // cout << "Local Clustering Coefficient of " << idNode << " :" << ccValue << endl;
+
+    // if (node != nullptr) {
+    //     edge = node->getFirstEdge();
+    //     int idEdge;
+    //     // Percorre a lista de adjacencia do nó idNode
+    //     while (edge != nullptr) {
+    //         idEdge = edge->getTargetId();
+    //         node2 = this->getNode(idEdge);
+    //         // Acessa a lista de adj da lista de adj de idNode
+    //         if (node2 != nullptr) {
+    //             edge2 = node2->getFirstEdge();
+    //             while(edge2 != nullptr) {
+    //                 ccValue += this->countNodeInAdjList(edge2->getTargetId(), idNode);
+    //                 edge2 = edge2->getNextEdge();
+    //             }
+    //         }
+    //         edge = edge->getNextEdge();
+    //     }
+    // }
+    if(dv != 1) {
+        dv=dv*(dv-1);
+    }
+    ccValue = float(P/dv);
+    // cout << P << "/" << dv << endl;
     return ccValue;
 }
 
@@ -360,7 +402,7 @@ int Graph::countNodeInAdjList(int idNode, int idToFind) {
     return value;
 }
 
-int Graph::averageClusteringCoefficient() {
+float Graph::averageClusteringCoefficient() {
     Node *node = this->getFirstNode();
     float ccValueTotal = 0;
     int id;
