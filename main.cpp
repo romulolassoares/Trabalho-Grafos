@@ -104,16 +104,15 @@ int menu(){
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1] Subgrafo induzido por conjunto de vértices" << endl;
-    cout << "[2] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
-    cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
-    cout << "[4] Árvore Geradora Mínima de Prim" << endl;
-    cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
-    cout << "[6] Imprimir caminhamento em largura" << endl;
-    cout << "[7] Imprimir ordenacao topológica" << endl;
-    cout << "[8] Algoritmo Guloso" << endl;
-    cout << "[9] Algoritmo Guloso Randomizado " << endl;
-    cout << "[10] Algoritmo Guloso Randomizado Reativo" << endl;
+    cout << "[1] Fecho Transitivo Direto" << endl;
+    cout << "[2] Fecho Transitivo Indireto" << endl;
+    cout << "[3] Coeficiente de agrupamento de um vértice" << endl;
+    cout << "[4] Coeficiente médio de agrupamento de um grafo" << endl;
+    cout << "[5] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
+    cout << "[6] Caminho Mínimo entre dois vértices - Floyd" << endl;
+    cout << "[7] Árvore Geradora Mínima de Prim" << endl;
+    cout << "[8] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[9] Imprimir ordenacao de caminhamento de profundidade" << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -126,51 +125,60 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
     switch (selecao) {
 
-        //Subgrafo induzido por um conjunto de vértices X;
+        // Fecho Transitivo Direto
         case 1:{
 
             break;
         }
-            //Caminho mínimo entre dois vértices usando Dijkstra;
+        // Fecho Transitivo Indireto
         case 2:{
 
             break;
         }
 
-            //Caminho mínimo entre dois vértices usando Floyd;
+        // Coeficiente de agrupamento local
         case 3:{
-
+            Node *node = graph->getFirstNode();
+            while(node != nullptr) {
+                int id = node->getId();
+                cout << "Coeficiente do nó" << id << ": " << graph->localClusteringCoefficient(id) << endl;
+                node = node->getNextNode();
+            }
             break;
         }
-
-            //AGM - Kruscal;
+        // Coeficiente de agrupamento médio
         case 4:{
-
-
-
+            cout << "Coeficiente Medio de agrupamento do grafo";
+            cout << " = " << graph->averageClusteringCoefficient() << endl;
             break;
         }
-
-            //AGM Prim;
+        // Djkstra
         case 5:{
 
             break;
         }
-
-            //Busca em largura;
+        // Floyd
         case 6:{
 
             break;
         }
-            //Ordenação Topologica;
+        // Prim
         case 7:{
 
+            break;
+        }
+        // Kruskal
+        case 8:{
 
+            break;
+        }
+        // Caminhamento em Profundidade
+        case 9: {
             break;
         }
         default:
         {
-            cout << " Error!!! invalid option!!" << endl;
+            cout << "Exit!!!" << endl;
         }
 
     }
@@ -181,7 +189,7 @@ int mainMenu(ofstream& output_file, Graph* graph){
     int selecao = 1;
 
     while(selecao != 0){
-        system("clear");
+        // system("clear");
         selecao = menu();
 
         if(output_file.is_open())
@@ -224,8 +232,6 @@ int main(int argc, char const *argv[]) {
     input_file.open(argv[1], ios::in);
     output_file.open(argv[2], ios::out | ios::trunc);
 
-
-
     Graph* graph;
 
     if(input_file.is_open()){
@@ -242,28 +248,19 @@ int main(int argc, char const *argv[]) {
         cout << "Unable to open " << argv[1];
 
 
-    // mainMenu(output_file, graph);
-<<<<<<< HEAD
-
-    cout << "Coeficiente do nó 1: " << graph->localClusteringCoefficient(1) << endl;
-    cout << "Coeficiente do nó 2: " << graph->localClusteringCoefficient(2) << endl;
-    cout << "Coeficiente do nó 3: " << graph->localClusteringCoefficient(3) << endl;
-    cout << "Coeficiente do nó 4: " << graph->localClusteringCoefficient(4) << endl;
-    cout << "Coeficiente do nó 5: " << graph->localClusteringCoefficient(5) << endl;
-    cout << endl;
-    cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
-    cout << ") = " << graph->averageClusteringCoefficient() << endl;
-=======
-    cout << "Caminhamento em profundidade: ";
-    graph->depthFirstSearch(output_file,1);
-    cout << endl;
+    mainMenu(output_file, graph);
+    
+    // cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
+    // cout << ") = " << graph->averageClusteringCoefficient() << endl;
+    // cout << "Caminhamento em profundidade: ";
+    // graph->depthFirstSearch(output_file,1);
+    // cout << endl;
     // auto start1 = chrono::steady_clock::now();
-    graph->localClusteringCoefficient(5);
+    // graph->localClusteringCoefficient(5);
     // auto end1 = chrono::steady_clock::now();
     // cout << "Demorou  "
     // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
     // << " ms para calcular" << endl;
->>>>>>> 650d12ace4dd85c9932aa4640ae26e39a8f93da4
     
     //Fechando arquivo de entrada
     input_file.close();
