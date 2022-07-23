@@ -10,6 +10,13 @@
 #include <list>
 
 using namespace std;
+struct Aresta_aux
+{
+    int origem;
+    int destino;
+    int peso;
+};
+
 
 class Graph {
 
@@ -48,8 +55,16 @@ class Graph {
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
         void depthFirstSearch(ofstream& output_file, int id);
-        Graph* getVertexInduced(int* listIdNodes);
-        Graph* agmKuskal();
+
+    list<int> getFechoTransitivoDireto(list<int> &fechoDireto, int *id); //fecho transitivo direto
+    list<int> getFechoTransitivoIndireto(list<int> &fechoIndireto, int *id);//fecho transitivo indireto
+    void imprimirFechoTransitivoDireto(ofstream &output_file, int id);//fecho transitivo direto
+    void imprimirFechoTransitivoIndireto(ofstream &output_file, int id);//fecho transitivo indireto
+    void agmByKruskal(ofstream &outputFile,Graph *grafo);
+    void imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_arestas, Aresta_aux arestas_finais[]);
+    Graph *getVerticeInduzido(); //obter subgrafo induzido
+
+
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
@@ -70,6 +85,8 @@ class Graph {
         //Auxiliar methods
         bool searchListAdj(int idNode, int idToFind);
         int countNodeInAdjList(int idNode, int idToFind);
+        bool arestaNaLista(Aresta_aux listEdges[], int id, int destino, int size);
+        void cleanVisited();
 };
 
 #endif // GRAPH_H_INCLUDED

@@ -18,6 +18,7 @@ class Node {
         unsigned int in_degree;
         unsigned int out_degree;
         float weight;
+        bool visited;
         Node* next_node;
 
     public:
@@ -33,9 +34,12 @@ class Node {
         int getOutDegree();
         float getWeight();
         Node* getNextNode();
+        Edge* getEdge(int id_alvo);
+        bool getVisited();
         // Setters
         void setNextNode(Node* node);
         void setWeight(float weight);
+        void setVisited(bool visited);
         // Other methods
         bool searchEdge(int target_id);
         void insertEdge(int target_id, float weight);

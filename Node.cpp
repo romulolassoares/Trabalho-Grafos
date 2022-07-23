@@ -14,6 +14,7 @@ Node::Node(int id) {
     this->in_degree = 0;
     this->out_degree = 0;
     this->weight = 0;
+    this->visited = false;
     this->first_edge = nullptr;
     this->last_edge = nullptr;
     this->next_node = nullptr;
@@ -49,6 +50,9 @@ int Node::getInDegree() {
 int Node::getOutDegree() {
     return this->out_degree;
 }
+bool Node::getVisited(){
+    return visited;
+}
 
 float Node::getWeight() {
     return this->weight;
@@ -56,6 +60,15 @@ float Node::getWeight() {
 
 Node* Node::getNextNode() {
     return this->next_node;
+}
+Edge* Node::getEdge(int id)
+{
+    for(Edge *aresta_auxiliar = this->first_edge; aresta_auxiliar != nullptr; aresta_auxiliar = aresta_auxiliar->getNextEdge())
+    {
+        if(aresta_auxiliar->getTargetId() == id)
+            return aresta_auxiliar;
+    }
+    return nullptr;
 }
 
 // Setters
@@ -66,6 +79,9 @@ void Node::setNextNode(Node* next_node) {
 
 void Node::setWeight(float weight) {
     this->weight = weight;
+}
+void Node::setVisited(bool visitado) {
+    this->visited = visitado;
 }
 
 // Other methods

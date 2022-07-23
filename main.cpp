@@ -101,18 +101,17 @@ Graph* leituraInstancia(ifstream& input_file, int directed, int weightedEdge, in
 int menu(){
 
     int selecao;
-
-    cout << "MENU" << endl;
-    cout << "----" << endl;
-    cout << "[1] Fecho Transitivo Direto" << endl;
-    cout << "[2] Fecho Transitivo Indireto" << endl;
-    cout << "[3] Coeficiente de agrupamento de um vértice" << endl;
-    cout << "[4] Coeficiente médio de agrupamento de um grafo" << endl;
-    cout << "[5] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
-    cout << "[6] Caminho Mínimo entre dois vértices - Floyd" << endl;
-    cout << "[7] Árvore Geradora Mínima de Prim" << endl;
-    cout << "[8] Árvore Geradora Mínima de Kruskal" << endl;
-    cout << "[9] Imprimir ordenacao de caminhamento de profundidade" << endl;
+    cout <<endl;
+    cout << "   ------  MENU ------" << endl;
+    cout << "[1] Fecho transitivo direto de um vertice" << endl;
+    cout << "[2] Fecho transitivo indireto de um vertice" << endl;
+    cout << "[3] Coeficiente de agrupamento local de um vertice" << endl;
+    cout << "[4] Coeficiente de agrupamento medio do grafo" << endl;
+    cout << "[5] Caminho Minimo entre dois vertices - Dijkstra " << endl;
+    cout << "[6] Caminho Minimo entre dois vertices - Floyd" << endl;
+    cout << "[7] Arvore Geradora Minima - Prim" << endl;
+    cout << "[8] Arvore Geradora Minima - Kruskal " << endl;
+    cout << "[9] Caminhamento em profundidade " << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -125,18 +124,25 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
     switch (selecao) {
 
-        // Fecho Transitivo Direto
-        case 1:{
-
+        //Fecho transitivo direto de um vértice ;
+        case 1: {
+            int id;
+            cout << "Digite o ID do vertice para seu fecho transitivo direto: ";
+            cin >> id;
+            graph->imprimirFechoTransitivoDireto(output_file, id);
             break;
         }
-        // Fecho Transitivo Indireto
-        case 2:{
-
+            //Fecho transitivo indireto de um vértice;
+        case 2: {
+            int id;
+            cout << "Digite o ID do vertice para seu fecho transitivo indireto: ";
+            cin >> id;
+            graph->imprimirFechoTransitivoIndireto(output_file, id);
             break;
+
         }
 
-        // Coeficiente de agrupamento local
+            //Coeficiente de agrupamento local de um vértice;
         case 3:{
             Node *node = graph->getFirstNode();
             while(node != nullptr) {
@@ -146,36 +152,40 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             }
             break;
         }
-        // Coeficiente de agrupamento médio
+            //Coeficiente de agrupamento médio do grafo;
         case 4:{
             cout << "Coeficiente Medio de agrupamento do grafo";
             cout << " = " << graph->averageClusteringCoefficient() << endl;
             break;
         }
         // Djkstra
-        case 5:{
+            // Caminho Mínimo entre dois vértices - Dijkstra ;
+        case 5: {
 
             break;
         }
-        // Floyd
-        case 6:{
+
+
+            // Caminho Mínimo entre dois vértices - Floyd;
+        case 6: {
 
             break;
         }
-        // Prim
-        case 7:{
+            //Árvore Geradora Mínima - Prim;
+        case 7: {
+
 
             break;
         }
-        // Kruskal
-        case 8:{
+            //Árvore Geradora Mínima - Kruskal;
+        case 8: {
+            graph->agmByKruskal(output_file,graph->getVerticeInduzido());
+            break;
+        }
+            //Caminhamento em profundidade
+            case 9: {
 
-            break;
-        }
-        // Caminhamento em Profundidade
-        case 9: {
-            break;
-        }
+            }
         default:
         {
             cout << "Exit!!!" << endl;
@@ -197,6 +207,7 @@ int mainMenu(ofstream& output_file, Graph* graph){
 
         else
             cout << "Unable to open the output_file" << endl;
+
 
         output_file << endl;
 
@@ -246,6 +257,7 @@ int main(int argc, char const *argv[]) {
 
     }else
         cout << "Unable to open " << argv[1];
+
 
 
     mainMenu(output_file, graph);
