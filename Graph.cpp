@@ -11,6 +11,7 @@
 #include <ctime>
 #include <float.h>
 #include <iomanip>
+#include <string.h>
 #include <vector>
 #include <algorithm>
 
@@ -149,8 +150,8 @@ void Graph::insertEdge(int id, int target_id, float weight) {
             nodeTargetId->incrementInDegree();
         }
     }
+    this->number_edges++;
 }
-
 bool Graph::searchEdge(int id, int target_id) {
     Node *node = this->getNode(id);
     Node *targetNode = this->getNode(target_id);
@@ -161,11 +162,13 @@ bool Graph::searchEdge(int id, int target_id) {
         if(edge->getTargetId() == target_id) {
             return true;
         }
-        edge = edge->getNextEdge();	
+        edge = edge->getNextEdge();
     }
 
     return false;
 }
+
+
 
 void Graph::removeNode(int id) {}
 
@@ -179,6 +182,7 @@ bool Graph::searchNode(int id)
     }
     return false;
 }
+
 
 Node *Graph::getNode(int id)
 {
@@ -310,11 +314,319 @@ float Graph::dijkstra(int idSource, int idTarget)
 
 // void breadthFirstSearch(ofstream& output_file) {}
 
-// Graph* getVertexInduced(int* listIdNodes) {}
+void Graph::cleanVisited()
+{
 
-// Graph* agmKuskal() {}
+    //Ponteiro para percorrer entre os nos
+    Node *n = this->getFirstNode();
 
-// Graph* agmPrim() {}
+    while (n != nullptr)
+    {
+        //Seta o no como nao visitado
+        n->setVisited(false);
+        //Ponteiro passa a apontar para o proximo no do grafo.
+        n = n->getNextNode();
+    }
+}
+Graph* Graph::getVerticeInduzido() {
+    int qtd_vertices,vertice;
+    vector<int> ids_subgrafo;
+    ids_subgrafo.clear();
+    cout << "Digite a quantidade de vertices do subgrafo: "<< endl;
+    cin >> qtd_vertices;
+    while(qtd_vertices > this->getOrder()) //loop para digitar ate um valor de ordem valida para o subgrafo induzido
+    {
+        cout << "O subgrafo nao pode ser maior que o grafo. Digite um numero valido para vertices do subgrafo: ";
+        cin >> qtd_vertices;
+        cout <<endl;
+    }
+    int i=0;
+    while(i<qtd_vertices) {
+        //cout <<i;
+        cout << "Digite o " << i+1 << "o vertice do subgrafo:";
+        cin >> vertice;
+        if(this->searchNode(vertice)) {
+            ids_subgrafo.push_back(vertice);
+        }
+        else {
+            while(!this->searchNode(vertice)){ //caso nao exista o vertice no grafo original
+                cout << "Vertice invalido. Digite apenas vertices presentes no grafo!" << endl;
+                cout << "Digite o " << i+1 << "o vertice do subgrafo:";
+                cin >> vertice;
+            }
+        }
+        i++;
+    }
+    //subgrafo induzido
+    Graph *subgrafoVInduzido = new Graph(ids_subgrafo.size(), this->getDirected(), this->getWeightedEdge(), this->getWeightedNode());
+    //adiciona arestas no subgrafo
+    this->cleanVisited(); //seta tudo como nao visitado
+    for(int i=0;i<ids_subgrafo.size();i++) {
+        for (int j = i + 1; j < ids_subgrafo.size(); j++)
+            if ((!this->getNode(ids_subgrafo[j])->getVisited() && this->getNode(ids_subgrafo[i])->searchEdge(ids_subgrafo[j]))) { //verifica se tem a aresta no grafo original
+                Edge *aresta_aux = this->getNode(ids_subgrafo[i])->getEdge(
+                        ids_subgrafo[j]);
+                subgrafoVInduzido->insertEdge(ids_subgrafo[i], ids_subgrafo[j], aresta_aux->getWeight());
+            }
+
+        this->getNode(ids_subgrafo[i])->setVisited(true); //altera para visitado
+    }
+    cout << "Grafo construido!" <<endl;
+    cout << "Num de vertices:" <<subgrafoVInduzido->getOrder() << endl;
+    cout << "Num de arestas: " << subgrafoVInduzido->getNumberEdges()<<endl;
+
+    return subgrafoVInduzido;
+}
+
+void Graph::imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_arestas, Aresta_aux arestas_finais[])
+{
+    cout << "---ALGORITMO DE KRUSKAL---" << endl;
+    int somatorio_pesos = 0;
+    cout<< "---ESTRUTURA APRESENTADA---:"<<endl;
+    cout << "(NO ORIGEM -- N0 DESTINO) - PESO do NO" << endl;
+    cout << "-------------------------------" << endl;
+
+    for (int i = 0; i < numero_arestas; i++)
+    {
+        cout << "(" << arestas_finais[i].origem << " -- " << arestas_finais[i].destino << ") - " << arestas_finais[i].peso << endl;
+        somatorio_pesos += arestas_finais[i].peso;
+    }
+    cout << "ORDEM DO SUBGRAFO:" <<" "<< ordem << endl;
+    cout << "NUMERO de ARESTAS: " << numero_arestas << endl;
+    cout << "SOMATORIO FINAL DOS PESOS: " << somatorio_pesos << endl;
+
+    cout << "-------------------------------" << endl;
+    //saida dot
+//    outputfile << "graph {" << endl;
+//    for (int i = 0; i < numero_arestas; i++)
+//    {
+//        outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
+//        outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
+//    }
+//    outputfile << "}" << endl;
+}
+//verifica se a aresta ja ta na lista
+bool Graph::arestaNaLista( Aresta_aux listEdges[], int id, int destino, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (listEdges[i].origem == destino && listEdges[i].destino == id)
+            return true;
+    }
+    return false;
+}
+
+// trocar 2 elementos
+void trocar(Aresta_aux *a1,  Aresta_aux *a2)
+{
+    Aresta_aux troca = *a1;
+    *a1 = *a2;
+    *a2 = troca;
+}
+
+//ordenar os elementos a partir de um pivo
+int particao(Aresta_aux vetor[], int menor, int maior)
+{
+    // pivo
+    int elemento_pivo = vetor[maior].peso;
+
+    int i = (menor - 1);
+
+    for (int j = menor; j <= maior - 1; j++)
+    {
+        if (vetor[j].peso <= elemento_pivo)
+        {
+            i++;
+            trocar(&vetor[i], &vetor[j]);
+        }
+    }
+    trocar(&vetor[i + 1], &vetor[maior]);
+    return (i + 1);
+}
+//ordenar vetor de arestas
+void quickSort(Aresta_aux vetor[], int menor, int maior)
+{
+    if (menor < maior)
+    {
+        int indice = particao(vetor, menor, maior); //indice particionamento
+        quickSort(vetor, menor, indice - 1);
+        quickSort(vetor, indice + 1, maior);
+    }
+}
+void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
+{
+    if(grafo->getNumberEdges() == 0){ //caso nao haja nenhuma aresta formada no subgrafo
+        cout<<"Este subgrafo nao contem arestas!"<<endl;
+        return;
+    }
+    Node *p = grafo->getFirstNode(); //ponteiro para os nos
+    Edge *aresta = p->getFirstEdge(); //ponteiro para as arestas
+    int numArestas_grafo = grafo->getNumberEdges(); //numero de arestas do subgrafo
+    Aresta_aux *lista_arestas = new Aresta_aux[numArestas_grafo]; //lista com as arestas
+
+    int i=0; //contador
+    while(p!= nullptr){ //percorre o subgrafo induzido preenchendo peso,origem e destino da aresta
+        aresta=p->getFirstEdge();
+        while (aresta!= nullptr){
+            if(!arestaNaLista(lista_arestas,p->getId(),aresta->getTargetId(),i)){
+                lista_arestas[i].origem=p->getId();
+                lista_arestas[i].destino=aresta->getTargetId();
+                lista_arestas[i].peso=aresta->getWeight();
+                i++;
+            }
+            aresta=aresta->getNextEdge();
+        }
+        p=p->getNextNode();
+    }
+
+    quickSort(lista_arestas, 0, numArestas_grafo - 1); //ordenando vetor de arestas
+
+    int numero_arestas = 0; //contador da qtd de arestas na solucao
+    int atual = 0; //indice para solucao
+    int vArestas[numArestas_grafo]; //vetor cujo tamanho eh a a qtd de arestas
+
+    Aresta_aux *arestas_finais = new Aresta_aux[numArestas_grafo]; //vetor com as arestas da solucao
+
+    for (int i = 0; i < numArestas_grafo; i++) //inicializa o vetor de 0 ao numero de arestas
+    {
+        vArestas[i] = i;
+    }
+
+    for (int i = 0; i < numArestas_grafo; i++) //percorre as arestas adicionando no vetor na solucao
+    {
+        int x = lista_arestas[i].origem;
+        int y = lista_arestas[i].destino;
+        if (vArestas[x] != vArestas[y])
+        {
+            arestas_finais[atual] = lista_arestas[i];
+            atual++;
+            numero_arestas++;
+            int id_antigo = vArestas[x]; //vertice antigo recebe origem
+            int id_novo = vArestas[y]; //vertice novo recebe destino
+            for (int j = 0; j < numArestas_grafo; j++) //atualiza o vetor para indices do id destino(novo)
+            {
+                if (vArestas[j] == id_antigo)
+                {
+                    vArestas[j] = id_novo;
+                }
+            }
+        }
+    }
+    imprimirAgmByKruskal(outputFile,grafo->getOrder(), numero_arestas, arestas_finais);
+
+    //desalocando
+    delete[] arestas_finais;
+    delete[] lista_arestas;
+}
+
+
+list<int> Graph::getFechoTransitivoIndireto(list<int> &fechoIndireto, int *id) {
+    if (!this->getDirected()) {
+        cout << "O grafo nao eh direcionado!" << endl;
+        return fechoIndireto;
+    } else {
+
+        //caso no vertice nao exista no grafo.
+        while (!searchNode(*id)) {
+            cout << "O vertice não existe no grafo.Por favor digite outro:";
+            cin >> *id;
+        }
+
+        fechoIndireto.push_back(*id); //adiciona o vertice na lista de fecho
+
+        //loop para lista de nos
+        for (Node *auxiliar = this->getFirstNode(); auxiliar != nullptr; auxiliar = auxiliar->getNextNode()) {
+
+            int nodeId = auxiliar->getId();
+
+            //loop para  lista de adjacencia procurando  arestas em que o vertice eh destino
+            for (Edge *adjacencia = auxiliar->getFirstEdge();
+                 adjacencia != nullptr; adjacencia = adjacencia->getNextEdge()) {
+                int idAlvo = adjacencia->getTargetId();
+
+                //Verifica se o vertice eh destino
+
+                if ((idAlvo == *id) &&
+                    (find(fechoIndireto.begin(), fechoIndireto.end(), nodeId) == fechoIndireto.end())) {
+                    getFechoTransitivoIndireto(fechoIndireto, &nodeId);
+                    break;
+                }
+            }
+        }
+    }
+    //retorna a lista com os vertices no fecho.
+    return fechoIndireto;
+}
+
+void Graph::imprimirFechoTransitivoIndireto(ofstream &output_file, int id) {
+    list<int> fechoIndireto;
+
+    getFechoTransitivoIndireto(fechoIndireto, &id);
+    list<int>::iterator x;
+
+    cout << "|||| FECHO TRANSITIVO INDIRETO DO VERTICE " << id << ": ";
+
+
+    for (x = fechoIndireto.begin(); x != fechoIndireto.end(); x++) {
+        cout << *x << " ";
+    }
+    cout << "||||"<<endl;
+
+}
+
+void Graph::imprimirFechoTransitivoDireto(ofstream &output_file, int id) {
+
+    list<int> fechoDireto; //cria lista para os fechos
+    //chama a funcao para obter os fechos diretos de um id X
+    fechoDireto = getFechoTransitivoDireto(fechoDireto, &id);
+
+    list<int>::iterator x;
+    cout << "|||| FECHO TRANSITIVO DIRETO DO VERTICE " << id << ": ";
+
+    //Imprime o fecho transitivo na tela
+    for (x = fechoDireto.begin(); x != fechoDireto.end(); x++) {
+        cout << *x << " ";
+    }
+    cout << "||||"<<endl;
+}
+
+list<int> Graph::getFechoTransitivoDireto(list<int> &fechoDireto, int *id) {
+
+    if (!this->getDirected()) { //caso o grafo nao seja direcionado
+        cout << "O grafo nao eh direcionado!" << endl;
+        return fechoDireto;
+    } else {
+
+        //caso no vertice nao exista no grafo.
+        while (!searchNode(*id)) {
+            cout << "O vertice nao existe no grafo.Por favor digite outro:" << endl;
+            cin >> *id;
+        }
+
+        Node *node = getNode(*id);
+        //Percorrer os nos adjacentes
+        fechoDireto.push_back(*id); //insercao do vertice na lista.
+        for (Edge *adjacencia = node->getFirstEdge(); adjacencia != nullptr; adjacencia = adjacencia->getNextEdge()) {
+
+            int idAlvo = adjacencia->getTargetId();
+
+            //Verifica se o no esta na lista do fecho.
+            if (find(fechoDireto.begin(), fechoDireto.end(), idAlvo) == fechoDireto.end()) {
+                //se tiver chama a funcao recursivamente passando ele.
+                getFechoTransitivoDireto(fechoDireto, &idAlvo);
+            }
+        }
+        //retorna a lista com os vertices no fecho.
+        return fechoDireto;
+    }
+}
+
+
+
+
+
+
+
 
 float Graph::localClusteringCoefficient(int idNode) {
     Node *node = this->getNode(idNode);
@@ -344,6 +656,7 @@ float Graph::localClusteringCoefficient(int idNode) {
             edge = edge->getNextEdge();
         }
     }
+
 
     // if (node != nullptr) {
     //     edge = node->getFirstEdge();
@@ -401,7 +714,7 @@ float Graph::averageClusteringCoefficient() {
     }
 
     result = ccValueTotal/this->getOrder();
-    
+
     return result;
 }
 
@@ -536,318 +849,16 @@ void Graph::printGraphDot(ofstream &file) {
         cout << "Falha ao abrir o arquivo";
     }
 }
-void Graph::cleanVisited()
-{
-
-    //Ponteiro para percorrer entre os nos
-    Node *n = this->getFirstNode();
-
-    while (n != nullptr)
-    {
-        //Seta o no como nao visitado
-        n->setVisited(false);
-        //Ponteiro passa a apontar para o proximo no do grafo.
-        n = n->getNextNode();
-    }
-}
 
 
 
 
-Graph* Graph::getVerticeInduzido() {
-    int qtd_vertices,vertice;
-    vector<int> ids_subgrafo;
-    ids_subgrafo.clear();
-    cout << "Digite a quantidade de vertices do subgrafo: "<< endl;
-    cin >> qtd_vertices;
-    while(qtd_vertices > this->getOrder()) //loop para digitar ate um valor de ordem valida para o subgrafo induzido
-    {
-        cout << "O subgrafo nao pode ser maior que o grafo. Digite um numero valido para vertices do subgrafo: ";
-        cin >> qtd_vertices;
-        cout <<endl;
-    }
-    int i=0;
-    while(i<qtd_vertices) {
-        //cout <<i;
-        cout << "Digite o " << i+1 << "o vertice do subgrafo:";
-        cin >> vertice;
-        if(this->searchNode(vertice)) {
-            ids_subgrafo.push_back(vertice);
-        }
-        else {
-            while(!this->searchNode(vertice)){ //caso nao exista o vertice no grafo original
-                cout << "Vertice invalido. Digite apenas vertices presentes no grafo!" << endl;
-                cout << "Digite o " << i+1 << "o vertice do subgrafo:";
-                cin >> vertice;
-            }
-        }
-        i++;
-    }
-    //subgrafo induzido
-    Graph *subgrafoVInduzido = new Graph(ids_subgrafo.size(), this->getDirected(), this->getWeightedEdge(), this->getWeightedNode()); //
-    //adiciona arestas no subgrafo
-    this->cleanVisited(); //seta tudo como nao visitado
-    for(int i=0;i<ids_subgrafo.size();i++) {
-        for (int j = i + 1; j < ids_subgrafo.size(); j++)
-            if ((!this->getNode(ids_subgrafo[j])->getVisited() && this->getNode(ids_subgrafo[i])->searchEdge(ids_subgrafo[j]))) { //verifica se tem a aresta no grafo original
-                Edge *aresta_aux = this->getNode(ids_subgrafo[i])->getEdge(
-                        ids_subgrafo[j]);
-                subgrafoVInduzido->insertEdge(ids_subgrafo[i], ids_subgrafo[j], aresta_aux->getWeight());
-            }
-
-        this->getNode(ids_subgrafo[i])->setVisited(true); //altera para visitado
-    }
-    cout << "Grafo construido!" <<endl;
-    cout << "Num de vertices:" <<subgrafoVInduzido->getOrder() << endl;
-    cout << "Num de arestas: " << subgrafoVInduzido->getNumberEdges()<<endl;
-
-    return subgrafoVInduzido;
-}
 
 
 
 
-void Graph::imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_arestas, Aresta_aux arestas_finais[])
-{
-    cout << "---ALGORITMO DE KRUSKAL---" << endl;
-    int somatorio_pesos = 0;
-    cout<< "---ESTRUTURA APRESENTADA---:"<<endl;
-    cout << "(NO ORIGEM -- N0 DESTINO) - PESO do NO" << endl;
-    cout << "-------------------------------" << endl;
-
-    for (int i = 0; i < numero_arestas; i++)
-    {
-        cout << "(" << arestas_finais[i].origem << " -- " << arestas_finais[i].destino << ") - " << arestas_finais[i].peso << endl;
-        somatorio_pesos += arestas_finais[i].peso;
-    }
-    cout << "ORDEM DO SUBGRAFO:" <<" "<< ordem << endl;
-    cout << "NUMERO de ARESTAS: " << numero_arestas << endl;
-    cout << "SOMATORIO FINAL DOS PESOS: " << somatorio_pesos << endl;
-
-    cout << "-------------------------------" << endl;
-    //saida dot
-//    outputfile << "graph {" << endl;
-//    for (int i = 0; i < numero_arestas; i++)
-//    {
-//        outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
-//        outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
-//    }
-//    outputfile << "}" << endl;
-}
-
-//verifica se a aresta ja ta na lista
-bool Graph::arestaNaLista( Aresta_aux listEdges[], int id, int destino, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        if (listEdges[i].origem == destino && listEdges[i].destino == id)
-            return true;
-    }
-    return false;
-}
-
-// trocar 2 elementos
-void trocar(Aresta_aux *a1,  Aresta_aux *a2)
-{
-    Aresta_aux troca = *a1;
-    *a1 = *a2;
-    *a2 = troca;
-}
-
-//ordenar os elementos a partir de um pivo
-int particao(Aresta_aux vetor[], int menor, int maior)
-{
-    // pivo
-    int elemento_pivo = vetor[maior].peso;
-
-    int i = (menor - 1);
-
-    for (int j = menor; j <= maior - 1; j++)
-    {
-        if (vetor[j].peso <= elemento_pivo)
-        {
-            i++;
-            trocar(&vetor[i], &vetor[j]);
-        }
-    }
-    trocar(&vetor[i + 1], &vetor[maior]);
-    return (i + 1);
-}
-//ordenar vetor de arestas
-void quickSort(Aresta_aux vetor[], int menor, int maior)
-{
-    if (menor < maior)
-    {
-        int indice = particao(vetor, menor, maior); //indice particionamento
-        quickSort(vetor, menor, indice - 1);
-        quickSort(vetor, indice + 1, maior);
-    }
-}
-void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
-{
-    if(grafo->getNumberEdges() == 0){ //caso nao haja nenhuma aresta formada no subgrafo
-        cout<<"Este subgrafo nao contem arestas!"<<endl;
-        return;
-    }
-    Node *p = grafo->getFirstNode(); //ponteiro para os nos
-    Edge *aresta = p->getFirstEdge(); //ponteiro para as arestas
-    int numArestas_grafo = grafo->getNumberEdges(); //numero de arestas do subgrafo
-    Aresta_aux *lista_arestas = new Aresta_aux[numArestas_grafo]; //lista com as arestas
-
-    int i=0; //contador
-    while(p!= nullptr){ //percorre o subgrafo induzido preenchendo peso,origem e destino da aresta
-        aresta=p->getFirstEdge();
-        while (aresta!= nullptr){
-            if(!arestaNaLista(lista_arestas,p->getId(),aresta->getTargetId(),i)){
-                lista_arestas[i].origem=p->getId();
-                lista_arestas[i].destino=aresta->getTargetId();
-                lista_arestas[i].peso=aresta->getWeight();
-                i++;
-            }
-            aresta=aresta->getNextEdge();
-        }
-        p=p->getNextNode();
-    }
-
-    quickSort(lista_arestas, 0, numArestas_grafo - 1); //ordenando vetor de arestas
-
-    int numero_arestas = 0; //contador da qtd de arestas na solucao
-    int atual = 0; //indice para solucao
-    int vArestas[numArestas_grafo]; //vetor cujo tamanho eh a a qtd de arestas
-
-    Aresta_aux *arestas_finais = new Aresta_aux[numArestas_grafo]; //vetor com as arestas da solucao
-
-    for (int i = 0; i < numArestas_grafo; i++) //inicializa o vetor de 0 ao numero de arestas
-    {
-        vArestas[i] = i;
-    }
-
-    for (int i = 0; i < numArestas_grafo; i++) //percorre as arestas adicionando no vetor na solucao
-    {
-        int x = lista_arestas[i].origem;
-        int y = lista_arestas[i].destino;
-        if (vArestas[x] != vArestas[y])
-        {
-            arestas_finais[atual] = lista_arestas[i];
-            atual++;
-            numero_arestas++;
-            int id_antigo = vArestas[x]; //vertice antigo recebe origem
-            int id_novo = vArestas[y]; //vertice novo recebe destino
-            for (int j = 0; j < numArestas_grafo; j++) //atualiza o vetor para indices do id destino(novo)
-            {
-                if (vArestas[j] == id_antigo)
-                {
-                    vArestas[j] = id_novo;
-                }
-            }
-        }
-    }
-    imprimirAgmByKruskal(outputFile,grafo->getOrder(), numero_arestas, arestas_finais);
-
-    //desalocando
-    delete[] arestas_finais;
-    delete[] lista_arestas;
-}
 
 
-list<int> Graph::getFechoTransitivoIndireto(list<int> &fechoIndireto, int *id) {
-    if (!this->getDirected()) {
-        cout << "O grafo nao eh direcionado!" << endl;
-        //fechoIndireto.clear();
-        return fechoIndireto;
-    } else {
-
-        //caso no vertice nao exista no grafo.
-        while (!searchNode(*id)) {
-            cout << "O vertice não existe no grafo.Por favor digite outro:";
-            cin >> *id;
-        }
-
-        fechoIndireto.push_back(*id); //adiciona o vertice na lista de fecho
-
-        //loop para lista de nos
-        for (Node *auxiliar = this->getFirstNode(); auxiliar != nullptr; auxiliar = auxiliar->getNextNode()) {
-
-            int nodeId = auxiliar->getId();
-
-            //loop para  lista de adjacencia procurando  arestas em que o vertice eh destino
-            for (Edge *adjacencia = auxiliar->getFirstEdge();
-                 adjacencia != nullptr; adjacencia = adjacencia->getNextEdge()) {
-                int idAlvo = adjacencia->getTargetId();
-
-                //Verifica se o vertice eh destino
-
-                if ((idAlvo == *id) &&
-                    (find(fechoIndireto.begin(), fechoIndireto.end(), nodeId) == fechoIndireto.end())) {
-                    getFechoTransitivoIndireto(fechoIndireto, &nodeId);
-                    break;
-                }
-            }
-        }
-    }
-    //retorna a lista com os vertices no fecho.
-    return fechoIndireto;
-}
-
-void Graph::imprimirFechoTransitivoIndireto(ofstream &output_file, int id) {
-    list<int> fechoIndireto;
-
-    getFechoTransitivoIndireto(fechoIndireto, &id);
-    list<int>::iterator x;
-
-    cout << "|||| FECHO TRANSITIVO INDIRETO DO VERTICE " << id << ": ";
 
 
-    for (x = fechoIndireto.begin(); x != fechoIndireto.end(); x++) {
-        cout << *x << " ";
-    }
-    cout << "||||"<<endl;
 
-}
-
-void Graph::imprimirFechoTransitivoDireto(ofstream &output_file, int id) {
-
-    list<int> fechoDireto; //cria lista para os fechos
-    //chama a funcao para obter os fechos diretos de um id X
-    fechoDireto = getFechoTransitivoDireto(fechoDireto, &id);
-
-    list<int>::iterator x;
-    cout << "|||| FECHO TRANSITIVO DIRETO DO VERTICE " << id << ": ";
-
-    //Imprime o fecho transitivo na tela
-    for (x = fechoDireto.begin(); x != fechoDireto.end(); x++) {
-        cout << *x << " ";
-    }
-    cout << "||||"<<endl;
-}
-
-list<int> Graph::getFechoTransitivoDireto(list<int> &fechoDireto, int *id) {
-
-    if (!this->getDirected()) { //caso o grafo nao seja direcionado
-        cout << "O grafo nao eh direcionado!" << endl;
-        return fechoDireto;
-    } else {
-
-        //caso no vertice nao exista no grafo.
-        while (!searchNode(*id)) {
-            cout << "O vertice nao existe no grafo.Por favor digite outro:" << endl;
-            cin >> *id;
-        }
-
-        Node *node = getNode(*id);
-        //Percorrer os nos adjacentes
-        fechoDireto.push_back(*id); //insercao do vertice na lista.
-        for (Edge *adjacencia = node->getFirstEdge(); adjacencia != nullptr; adjacencia = adjacencia->getNextEdge()) {
-
-            int idAlvo = adjacencia->getTargetId();
-
-            //Verifica se o no esta na lista do fecho.
-            if (find(fechoDireto.begin(), fechoDireto.end(), idAlvo) == fechoDireto.end()) {
-                //se tiver chama a funcao recursivamente passando ele.
-                getFechoTransitivoDireto(fechoDireto, &idAlvo);
-            }
-        }
-        //retorna a lista com os vertices no fecho.
-        return fechoDireto;
-    }
-}

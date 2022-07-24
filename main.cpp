@@ -147,7 +147,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             Node *node = graph->getFirstNode();
             while(node != nullptr) {
                 int id = node->getId();
-                cout << "Coeficiente do nó" << id << ": " << graph->localClusteringCoefficient(id) << endl;
+                cout << "Coeficiente do nó " << id << ": " << graph->localClusteringCoefficient(id) << endl;
                 node = node->getNextNode();
             }
             break;
