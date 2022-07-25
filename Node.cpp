@@ -192,3 +192,10 @@ Edge* Node::hasEdgeBetween(int target_id) {
     }
     return nullptr;
 }
+bool Node::verifyEdge(int target_id) {
+    for(Edge *auxEdge = this->first_edge; auxEdge != nullptr; auxEdge = auxEdge->getNextEdge()) {
+        if(auxEdge->getTargetId() == target_id)
+            return true;
+    }
+    return false;
+}

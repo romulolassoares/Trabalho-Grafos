@@ -139,7 +139,6 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             cin >> id;
             graph->imprimirFechoTransitivoIndireto(output_file, id);
             break;
-
         }
 
             //Coeficiente de agrupamento local de um vértice;
@@ -161,7 +160,13 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
         // Djkstra
             // Caminho Mínimo entre dois vértices - Dijkstra ;
         case 5: {
-
+            int id1, id2;
+            cout << "Digite o vértcie de inicio: ";
+            cin >> id1;
+            cout << "Digite o vértcie final: ";
+            cin >> id2;
+            float distancia = graph->dijkstra(id1,id2);
+            cout << "A distancia entre " << id1 << " e " << id2 << " é de: " << distancia << endl;
             break;
         }
 
@@ -183,9 +188,13 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             break;
         }
             //Caminhamento em profundidade
-            case 9: {
-
-            }
+        case 9: {
+            output_file.close();
+            int id;
+            cout << "Digite o vértice de inicio: ";
+            cin >> id;
+            graph->depthFirstSearch(output_file, id);
+        }
         default:
         {
             cout << "Exit!!!" << endl;
@@ -244,7 +253,6 @@ int main(int argc, char const *argv[]) {
     output_file.open(argv[2], ios::out | ios::trunc);
 
     Graph* graph;
-
     if(input_file.is_open()){
         auto start = chrono::steady_clock::now();
         graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
@@ -258,22 +266,8 @@ int main(int argc, char const *argv[]) {
     }else
         cout << "Unable to open " << argv[1];
 
-
-
     mainMenu(output_file, graph);
-    
-    // cout << "Coeficiente Medio de agrupamento do grafo (" << graph;
-    // cout << ") = " << graph->averageClusteringCoefficient() << endl;
-    // cout << "Caminhamento em profundidade: ";
-    // graph->depthFirstSearch(output_file,1);
-    // cout << endl;
-    // auto start1 = chrono::steady_clock::now();
-    // graph->localClusteringCoefficient(5);
-    // auto end1 = chrono::steady_clock::now();
-    // cout << "Demorou  "
-    // << chrono::duration_cast<chrono::milliseconds>(end1 - start1).count()
-    // << " ms para calcular" << endl;
-    
+        
     //Fechando arquivo de entrada
     input_file.close();
 

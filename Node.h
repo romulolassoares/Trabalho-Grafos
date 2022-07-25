@@ -50,6 +50,7 @@ class Node {
         void incrementInDegree();
         void decrementInDegree();
         Edge* hasEdgeBetween(int target_id);
+        bool verifyEdge(int target_id);
         // Auxiliar methods
 };
 

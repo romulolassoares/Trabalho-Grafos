@@ -168,8 +168,6 @@ bool Graph::searchEdge(int id, int target_id) {
     return false;
 }
 
-
-
 void Graph::removeNode(int id) {}
 
 bool Graph::searchNode(int id)
@@ -201,6 +199,7 @@ Node *Graph::getNode(int id)
 //  void Graph::breadthFirstSearch(ofstream &output_file) {}
 void Graph::depthFirstSearch(ofstream &output_file, int id)
 {
+    
     list<Edge> arvore, retorno;
 
     int *tempoDescobertaVertice = new int[this->getOrder()];
@@ -229,6 +228,13 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
     for(it = retorno.begin(); it != retorno.end(); it++){
         cout << "[" << (*it).getOrigem() << "---" << (*it).getTargetId() << "]" << endl;
     }
+    output_file.clear();
+    output_file << "graph {" << endl;
+    for (it = arvore.begin(); it != arvore.end(); it++)
+    {
+        output_file << "  " << (*it).getOrigem() << " -- " << (*it).getTargetId() << endl;
+    }
+    output_file << "}" << endl;
 
     // Deletando vetores
     delete[] tempoDescobertaVertice;
@@ -269,44 +275,116 @@ void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, in
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
-    int distancia[order];
+    if(!this->getDirected()){
+        float *distancia = new float[this->order];
+        float infinito = numeric_limits<float>::max();
+        int *mapeamento = new int[this->order];
+        int *aPercorrer = new int[this->order];
+        int *noAnterior = new int[this->order];
 
-    int visitados[order];
-    priority_queue<pair<int, int>,
-                   vector<pair<int, int>>, greater<pair<int, int>>>
-        pq;
-
-    for (int i = 0; i < order; i++)
-    {
-        distancia[i] = 1;
-        visitados[i] = false;
-    }
-    distancia[idSource] = 0;
-    int custo_aresta = 0;
-    // insere na fila
-    pq.push(make_pair(distancia[idSource], idSource));
-    while (!pq.empty())
-    {
-        pair<int, int> p = pq.top(); // tirando o pair do topo
-        int u = p.second;            // obtém o vértice do pair
-        pq.pop();                    // remove da fila
-        if (visitados[u] == false)
+        for (int i = 0; i < this->order; i++)
         {
-            // marca como visitado
-            visitados[u] = true;
-            list<pair<int, int>>::iterator it;
+            mapeamento[i] = i;
+            if (i == idSource)
             {
-                int v = it->first;
-                custo_aresta = it->second;
-                if (distancia[v] > (distancia[u] + custo_aresta))
+                distancia[i] = 0;
+                aPercorrer[i] = 0;
+            }
+            else
+            {
+                distancia[i] = infinito;
+                aPercorrer[i] = 1;
+            }
+            noAnterior[i] = -1;
+        }
+        auxDijkstra(distancia, aPercorrer, noAnterior, mapeamento, idSource);
+        return distancia[idTarget];
+    }
+    else{
+        cout << "ERROR!!!" << endl;
+        return 0;
+    }
+}
+
+void Graph::auxDijkstra(float *distancia, int *aPercorrer, int *noAnterior, int *map, int atual)
+{
+    int indiceAtual = mapeamento(map, atual);
+    int indiceAresta;
+    Edge *adj;
+    Node *aux = this->getFirstNode();
+
+    //enquanto a aresta não é nula preenche os vetores de distancia e noAnterior
+    while (aux != nullptr)
+    {
+        if(atual == aux->getId())
+        {
+            while (aux != nullptr)
+            {
+                adj = aux->getFirstEdge();
+                while(adj != nullptr)
                 {
-                    distancia[v] = distancia[u] + custo_aresta;
-                    pq.push(make_pair(distancia[v], v));
+                    indiceAresta = mapeamento(map, adj->getTargetId());
+                    //caso o indicie atual da aresta não seja -1
+                    if (distancia[indiceAresta] != -1)
+                    {
+                        if (distancia[indiceAresta] > distancia[indiceAtual] + adj->getWeight())
+                        {
+                            distancia[indiceAresta] = distancia[indiceAtual] + adj->getWeight();
+                            noAnterior[indiceAresta] = atual;
+                        }
+                    }
+                     else
+                    {
+                        distancia[indiceAresta] = distancia[indiceAtual] + adj->getWeight();
+                        noAnterior[indiceAresta] = atual;
+                    }
+                    adj = adj->getNextEdge();
                 }
+                aux = nullptr;
+            }
+        }
+        else{
+            aux = aux->getNextNode();
+            }
+    }
+    int menor = -1;
+
+    for (int i = 0; i < this->getOrder() && menor == -1; i++)
+    {
+        if (aPercorrer[i])
+        {
+            if (distancia[i] != -1)
+            {
+                menor = distancia[i];
+                atual = map[i];
             }
         }
     }
-    return distancia[idTarget];
+    if (menor != -1)
+    {
+        for (int i = 0; i < this->getOrder(); i++)
+        {
+            if (aPercorrer[i])
+                if (distancia[i] != -1)
+                    if (distancia[i] < menor)
+                    {
+                        menor = distancia[i];
+                        atual = map[i];
+                    }
+        }
+        aPercorrer[indiceAtual] = 0;
+        auxDijkstra(distancia, aPercorrer, noAnterior, map, atual);
+    }
+}
+
+int Graph::mapeamento(int *map, int id)
+{
+    for (int i = 0; i < this->getOrder(); i++)
+    {
+        if (map[i] == id)
+            return i;
+    }
+    return -1;
 }
 
 // function that prints a topological sorting
@@ -316,7 +394,6 @@ float Graph::dijkstra(int idSource, int idTarget)
 
 void Graph::cleanVisited()
 {
-
     //Ponteiro para percorrer entre os nos
     Node *n = this->getFirstNode();
 
@@ -328,6 +405,7 @@ void Graph::cleanVisited()
         n = n->getNextNode();
     }
 }
+
 Graph* Graph::getVerticeInduzido() {
     int qtd_vertices,vertice;
     vector<int> ids_subgrafo;
@@ -397,13 +475,13 @@ void Graph::imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_ares
 
     cout << "-------------------------------" << endl;
     //saida dot
-//    outputfile << "graph {" << endl;
-//    for (int i = 0; i < numero_arestas; i++)
-//    {
-//        outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
-//        outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
-//    }
-//    outputfile << "}" << endl;
+   outputfile << "graph {" << endl;
+   for (int i = 0; i < numero_arestas; i++)
+   {
+       outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
+       outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
+   }
+   outputfile << "}" << endl;
 }
 //verifica se a aresta ja ta na lista
 bool Graph::arestaNaLista( Aresta_aux listEdges[], int id, int destino, int size)
@@ -621,13 +699,6 @@ list<int> Graph::getFechoTransitivoDireto(list<int> &fechoDireto, int *id) {
     }
 }
 
-
-
-
-
-
-
-
 float Graph::localClusteringCoefficient(int idNode) {
     Node *node = this->getNode(idNode);
     Node *node2 = nullptr;
@@ -656,26 +727,6 @@ float Graph::localClusteringCoefficient(int idNode) {
             edge = edge->getNextEdge();
         }
     }
-
-
-    // if (node != nullptr) {
-    //     edge = node->getFirstEdge();
-    //     int idEdge;
-    //     // Percorre a lista de adjacencia do nó idNode
-    //     while (edge != nullptr) {
-    //         idEdge = edge->getTargetId();
-    //         node2 = this->getNode(idEdge);
-    //         // Acessa a lista de adj da lista de adj de idNode
-    //         if (node2 != nullptr) {
-    //             edge2 = node2->getFirstEdge();
-    //             while(edge2 != nullptr) {
-    //                 ccValue += this->countNodeInAdjList(edge2->getTargetId(), idNode);
-    //                 edge2 = edge2->getNextEdge();
-    //             }
-    //         }
-    //         edge = edge->getNextEdge();
-    //     }
-    // }
     if(dv != 1) {
         dv=dv*(dv-1);
     }
