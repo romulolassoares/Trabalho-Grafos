@@ -181,22 +181,6 @@ bool Graph::searchNode(int id)
     return false;
 }
 
-bool Graph::searchEdge(int id, int target_id) {
-    Node *node = this->getNode(id);
-    Node *targetNode = this->getNode(target_id);
-    Edge *edge = nullptr;
-
-    edge = node->getFirstEdge();
-    while(edge != nullptr) {
-        if(edge->getTargetId() == target_id) {
-            return true;
-        }
-        edge = edge->getNextEdge();	
-    }
-
-    return false;
-}
-
 Node *Graph::getNode(int id)
 {
     Node *node = this->getFirstNode();
