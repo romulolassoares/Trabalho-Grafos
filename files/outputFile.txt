@@ -1,59 +1,18 @@
 strict graph { 
-   0--1 [label=7,weight=7]
-   0--5 [label=1,weight=1]
-   1--0 [label=7,weight=7]
-   1--6 [label=6,weight=6]
-   1--8 [label=8,weight=8]
-   5--0 [label=1,weight=1]
-   5--2 [label=4,weight=4]
-   5--6 [label=1,weight=1]
-   6--1 [label=6,weight=6]
-   6--2 [label=6,weight=6]
-   6--4 [label=7,weight=7]
-   6--5 [label=1,weight=1]
-   6--7 [label=0,weight=0]
-   8--1 [label=8,weight=8]
-   8--4 [label=9,weight=9]
-   8--9 [label=9,weight=9]
-   2--5 [label=4,weight=4]
-   2--7 [label=3,weight=3]
-   2--6 [label=6,weight=6]
-   7--2 [label=3,weight=3]
-   7--3 [label=3,weight=3]
-   7--4 [label=11,weight=11]
-   7--6 [label=0,weight=0]
-   7--9 [label=6,weight=6]
-   3--9 [label=10,weight=10]
-   3--7 [label=3,weight=3]
-   9--3 [label=10,weight=10]
-   9--7 [label=6,weight=6]
-   9--8 [label=9,weight=9]
-   4--8 [label=9,weight=9]
-   4--6 [label=7,weight=7]
-   4--7 [label=11,weight=11]
+   1--2 [label=3,weight=3]
+   1--3 [label=3,weight=3]
+   1--4 [label=2,weight=2]
+   2--1 [label=3,weight=3]
+   2--5 [label=5,weight=5]
+   2--3 [label=9,weight=9]
+   2--4 [label=4,weight=4]
+   5--2 [label=5,weight=5]
+   5--4 [label=1,weight=1]
+   3--2 [label=9,weight=9]
+   3--1 [label=3,weight=3]
+   3--4 [label=1,weight=1]
+   4--2 [label=4,weight=4]
+   4--5 [label=1,weight=1]
+   4--1 [label=2,weight=2]
+   4--3 [label=1,weight=1]
 } 
-graph {
-  0 -- 1
-  1 -- 6
-  6 -- 2
-  2 -- 5
-  2 -- 7
-  7 -- 3
-  3 -- 9
-  9 -- 8
-  8 -- 4
-}
-
-graph {
-  0 -- 1
-  1 -- 6
-  6 -- 2
-  2 -- 5
-  2 -- 7
-  7 -- 3
-  3 -- 9
-  9 -- 8
-  8 -- 4
-}
-
-
