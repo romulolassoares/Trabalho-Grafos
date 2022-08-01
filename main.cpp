@@ -143,12 +143,10 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             //Coeficiente de agrupamento local de um vértice;
         case 3:{
-            Node *node = graph->getFirstNode();
-            while(node != nullptr) {
-                int id = node->getId();
-                cout << "Coeficiente do nó " << id << ": " << graph->localClusteringCoefficient(id) << endl;
-                node = node->getNextNode();
-            }
+            int id;
+            cout << "Digite o ID do vertice: ";
+            cin >> id;
+            cout << "Coeficiente do nó " << id << ": " << graph->localClusteringCoefficient(id) << endl;
             break;
         }
             //Coeficiente de agrupamento médio do grafo;
