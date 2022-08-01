@@ -10,6 +10,13 @@
 #include <list>
 
 using namespace std;
+struct Aresta_aux
+{
+    int origem;
+    int destino;
+    int peso;
+};
+
 
 class Graph {
 
@@ -43,18 +50,28 @@ class Graph {
         bool searchNode(int id);
         Node* getNode(int id);
         bool searchEdge(int id, int target_id);
+        int minimalDistance(bool visitados[], float dist[]);
 
         //methods phase1
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
         void depthFirstSearch(ofstream& output_file, int id);
-        Graph* getVertexInduced(int* listIdNodes);
-        Graph* agmKuskal();
+
+        list<int> getFechoTransitivoDireto(list<int> &fechoDireto, int *id); //fecho transitivo direto
+        list<int> getFechoTransitivoIndireto(list<int> &fechoIndireto, int *id);//fecho transitivo indireto
+        void imprimirFechoTransitivoDireto(ofstream &output_file, int id);//fecho transitivo direto
+        void imprimirFechoTransitivoIndireto(ofstream &output_file, int id);//fecho transitivo indireto
+        void agmByKruskal(ofstream &outputFile,Graph *grafo);
+        void imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_arestas, Aresta_aux arestas_finais[]);
+        Graph *getVerticeInduzido(); //obter subgrafo induzido
+
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
         float localClusteringCoefficient(int idNode);
         float averageClusteringCoefficient();
+        void auxDijkstra(float *dist, int *aPercorrer, int *noAnterior, int *map, int atual);
+        int mapeamento(int *map, int id);
 
         //methods phase1
         float greed();
@@ -70,6 +87,8 @@ class Graph {
         //Auxiliar methods
         bool searchListAdj(int idNode, int idToFind);
         int countNodeInAdjList(int idNode, int idToFind);
+        bool arestaNaLista(Aresta_aux listEdges[], int id, int destino, int size);
+        void cleanVisited();
 };
 
 #endif // GRAPH_H_INCLUDED
