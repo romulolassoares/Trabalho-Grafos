@@ -187,7 +187,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
         }
             //Caminhamento em profundidade
         case 9: {
-            output_file.close();
+            // output_file.close();
             int id;
             cout << "Digite o vértice de inicio: ";
             cin >> id;
