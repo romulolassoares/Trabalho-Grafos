@@ -14,6 +14,8 @@
 #include <string.h>
 #include <vector>
 #include <algorithm>
+#include "Matriz.h"
+#include <map>
 
 #define INFINITO 10000000
 
@@ -24,8 +26,7 @@ using namespace std;
  **************************************************************************************************/
 
 // Constructor
-Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
-{
+Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node) {
     this->order = order;
     this->directed = directed;
     this->weighted_edge = weighted_edge;
@@ -35,11 +36,9 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
 }
 
 // Destructor
-Graph::~Graph()
-{
+Graph::~Graph() {
     Node *next_node = this->first_node;
-    while (next_node != nullptr)
-    {
+    while (next_node != nullptr) {
         next_node->removeAllEdges();
         Node *aux_node = next_node->getNextNode();
         delete next_node;
@@ -48,13 +47,11 @@ Graph::~Graph()
 }
 
 // Getters
-int Graph::getOrder()
-{
+int Graph::getOrder() {
     return this->order;
 }
 
-int Graph::getNumberEdges()
-{
+int Graph::getNumberEdges() {
     return this->number_edges;
 }
 
@@ -73,13 +70,11 @@ bool Graph::getWeightedNode() {
     return this->weighted_node;
 }
 
-Node *Graph::getFirstNode()
-{
+Node *Graph::getFirstNode() {
     return this->first_node;
 }
 
-Node *Graph::getLastNode()
-{
+Node *Graph::getLastNode() {
     return this->last_node;
 }
 
@@ -88,8 +83,7 @@ Node *Graph::getLastNode()
     The outdegree attribute of nodes is used as a counter for the number of edges in the graph.
     This allows the correct updating of the numbers of edges in the graph being directed or not.
 */
-void Graph::insertNode(int id)
-{
+void Graph::insertNode(int id) {
     Node *next;
     Node *aux = nullptr;
 
@@ -97,14 +91,11 @@ void Graph::insertNode(int id)
     if (this->getFirstNode() == nullptr) {
         this->first_node = new Node(id);
         this->last_node = this->getFirstNode();
-    }
-    else {
-        if (!this->searchNode(id))
-        {
+    } else {
+        if (!this->searchNode(id)) {
             next = this->getFirstNode();
             // Procura o último nó inserido
-            while (next != nullptr)
-            {
+            while (next != nullptr) {
                 aux = next;
                 next = next->getNextNode();
             }
@@ -122,7 +113,7 @@ void Graph::insertEdge(int id, int target_id, float weight) {
         // cout << "Inserindo " << id << endl;
     }
     // Procura se o nó target_id existe. Se não existir insere ele no grafo
-    if (!this->searchNode(target_id)){
+    if (!this->searchNode(target_id)) {
         this->insertNode(target_id);
         // cout << "Inserindo " << target_id << endl;
     }
@@ -137,10 +128,9 @@ void Graph::insertEdge(int id, int target_id, float weight) {
         // Aumenta os graus de saída e de entrada
         nodeId->incrementOutDegree();
         nodeTargetId->incrementInDegree();
-    }
-    else {
+    } else {
         // Cria a aresta => id - target_id
-        if(!this->searchEdge(id, target_id)) {
+        if (!this->searchEdge(id, target_id)) {
             nodeId->insertEdge(target_id, weight);
             nodeTargetId->insertEdge(id, weight);
             // Aumenta os graus de saída e de entrada
@@ -152,14 +142,15 @@ void Graph::insertEdge(int id, int target_id, float weight) {
     }
     this->number_edges++;
 }
+
 bool Graph::searchEdge(int id, int target_id) {
     Node *node = this->getNode(id);
     Node *targetNode = this->getNode(target_id);
     Edge *edge = nullptr;
 
     edge = node->getFirstEdge();
-    while(edge != nullptr) {
-        if(edge->getTargetId() == target_id) {
+    while (edge != nullptr) {
+        if (edge->getTargetId() == target_id) {
             return true;
         }
         edge = edge->getNextEdge();
@@ -170,8 +161,7 @@ bool Graph::searchEdge(int id, int target_id) {
 
 void Graph::removeNode(int id) {}
 
-bool Graph::searchNode(int id)
-{
+bool Graph::searchNode(int id) {
     Node *node = this->getFirstNode();
     while (node != nullptr) {
         if (node->getId() == id)
@@ -181,12 +171,10 @@ bool Graph::searchNode(int id)
     return false;
 }
 
-Node *Graph::getNode(int id)
-{
+Node *Graph::getNode(int id) {
     Node *node = this->getFirstNode();
 
-    while (node != nullptr)
-    {
+    while (node != nullptr) {
         if (node->getId() == id)
             return node;
         node = node->getNextNode();
@@ -196,9 +184,8 @@ Node *Graph::getNode(int id)
 
 // Function that prints a set of edges belongs breadth tree
 //  void Graph::breadthFirstSearch(ofstream &output_file) {}
-void Graph::depthFirstSearch(ofstream &output_file, int id)
-{
-    
+void Graph::depthFirstSearch(ofstream &output_file, int id) {
+
     list<Edge> arvore, retorno;
 
     int *tempoDescobertaVertice = new int[this->getOrder()];
@@ -208,8 +195,7 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
 
     int *pai = new int[this->getOrder()];
 
-    for (int i = 0; i < this->getOrder(); i++)
-    {
+    for (int i = 0; i < this->getOrder(); i++) {
         tempoDescobertaVertice[i] = 0;
         tempoFinalDescobertaVertice[i] = 0;
         pai[i] = -1;
@@ -219,18 +205,16 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
 
     list<Edge>::iterator it;
     cout << "Arestas da árvore: " << endl;
-    for (it = arvore.begin(); it != arvore.end(); it++)
-    {
+    for (it = arvore.begin(); it != arvore.end(); it++) {
         cout << "[" << (*it).getOrigem() << "---" << (*it).getTargetId() << "]" << endl;
     }
     cout << "Arestas de Retorno: " << endl;
-    for(it = retorno.begin(); it != retorno.end(); it++){
+    for (it = retorno.begin(); it != retorno.end(); it++) {
         cout << "[" << (*it).getOrigem() << "---" << (*it).getTargetId() << "]" << endl;
     }
     output_file.clear();
     output_file << "graph {" << endl;
-    for (it = arvore.begin(); it != arvore.end(); it++)
-    {
+    for (it = arvore.begin(); it != arvore.end(); it++) {
         output_file << "  " << (*it).getOrigem() << " -- " << (*it).getTargetId() << endl;
     }
     output_file << "}" << endl;
@@ -241,28 +225,24 @@ void Graph::depthFirstSearch(ofstream &output_file, int id)
     delete[] pai;
 }
 
-void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal)
-{
+void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta,
+                   int *tempoFinal) {
     tempo++;
     tempoDescoberta[id] = tempo;
     Node *no = getNode(id);
 
-    for (Edge *adj = no->getFirstEdge(); adj != nullptr; adj = adj->getNextEdge())
-    {
+    for (Edge *adj = no->getFirstEdge(); adj != nullptr; adj = adj->getNextEdge()) {
         Edge aresta = Edge(adj->getTargetId());
         aresta.setOrigem(id);
 
-        if (tempoDescoberta[adj->getTargetId()] == 0)
-        {
+        if (tempoDescoberta[adj->getTargetId()] == 0) {
             arvore.push_back(aresta);
 
             pai[adj->getTargetId()] = id;
 
             dfsRec(adj->getTargetId(), arvore, retorno, pai, tempo, tempoDescoberta, tempoFinal);
-        }
-        else
-        {
-            if ((tempoFinal[adj->getTargetId()] == 0) && (pai[id] != adj->getTargetId())){
+        } else {
+            if ((tempoFinal[adj->getTargetId()] == 0) && (pai[id] != adj->getTargetId())) {
                 retorno.push_back(aresta);
             }
         }
@@ -272,25 +252,20 @@ void Graph::dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, in
 
 // float Graph::floydMarshall(int idSource, int idTarget) {}
 
-float Graph::dijkstra(int idSource, int idTarget)
-{
-    if(!this->getDirected()){
+float Graph::dijkstra(int idSource, int idTarget) {
+    if (!this->getDirected()) {
         float *distancia = new float[this->order];
         float infinito = numeric_limits<float>::max();
         int *mapeamento = new int[this->order];
         int *aPercorrer = new int[this->order];
         int *noAnterior = new int[this->order];
 
-        for (int i = 0; i < this->order; i++)
-        {
+        for (int i = 0; i < this->order; i++) {
             mapeamento[i] = i;
-            if (i == idSource)
-            {
+            if (i == idSource) {
                 distancia[i] = 0;
                 aPercorrer[i] = 0;
-            }
-            else
-            {
+            } else {
                 distancia[i] = infinito;
                 aPercorrer[i] = 1;
             }
@@ -298,42 +273,32 @@ float Graph::dijkstra(int idSource, int idTarget)
         }
         auxDijkstra(distancia, aPercorrer, noAnterior, mapeamento, idSource);
         return distancia[idTarget];
-    }
-    else{
+    } else {
         cout << "ERROR!!!" << endl;
         return 0;
     }
 }
 
-void Graph::auxDijkstra(float *distancia, int *aPercorrer, int *noAnterior, int *map, int atual)
-{
+void Graph::auxDijkstra(float *distancia, int *aPercorrer, int *noAnterior, int *map, int atual) {
     int indiceAtual = mapeamento(map, atual);
     int indiceAresta;
     Edge *adj;
     Node *aux = this->getFirstNode();
 
     //enquanto a aresta não é nula preenche os vetores de distancia e noAnterior
-    while (aux != nullptr)
-    {
-        if(atual == aux->getId())
-        {
-            while (aux != nullptr)
-            {
+    while (aux != nullptr) {
+        if (atual == aux->getId()) {
+            while (aux != nullptr) {
                 adj = aux->getFirstEdge();
-                while(adj != nullptr)
-                {
+                while (adj != nullptr) {
                     indiceAresta = mapeamento(map, adj->getTargetId());
                     //caso o indicie atual da aresta não seja -1
-                    if (distancia[indiceAresta] != -1)
-                    {
-                        if (distancia[indiceAresta] > distancia[indiceAtual] + adj->getWeight())
-                        {
+                    if (distancia[indiceAresta] != -1) {
+                        if (distancia[indiceAresta] > distancia[indiceAtual] + adj->getWeight()) {
                             distancia[indiceAresta] = distancia[indiceAtual] + adj->getWeight();
                             noAnterior[indiceAresta] = atual;
                         }
-                    }
-                     else
-                    {
+                    } else {
                         distancia[indiceAresta] = distancia[indiceAtual] + adj->getWeight();
                         noAnterior[indiceAresta] = atual;
                     }
@@ -341,32 +306,25 @@ void Graph::auxDijkstra(float *distancia, int *aPercorrer, int *noAnterior, int 
                 }
                 aux = nullptr;
             }
-        }
-        else{
+        } else {
             aux = aux->getNextNode();
-            }
+        }
     }
     int menor = -1;
 
-    for (int i = 0; i < this->getOrder() && menor == -1; i++)
-    {
-        if (aPercorrer[i])
-        {
-            if (distancia[i] != -1)
-            {
+    for (int i = 0; i < this->getOrder() && menor == -1; i++) {
+        if (aPercorrer[i]) {
+            if (distancia[i] != -1) {
                 menor = distancia[i];
                 atual = map[i];
             }
         }
     }
-    if (menor != -1)
-    {
-        for (int i = 0; i < this->getOrder(); i++)
-        {
+    if (menor != -1) {
+        for (int i = 0; i < this->getOrder(); i++) {
             if (aPercorrer[i])
                 if (distancia[i] != -1)
-                    if (distancia[i] < menor)
-                    {
+                    if (distancia[i] < menor) {
                         menor = distancia[i];
                         atual = map[i];
                     }
@@ -376,10 +334,8 @@ void Graph::auxDijkstra(float *distancia, int *aPercorrer, int *noAnterior, int 
     }
 }
 
-int Graph::mapeamento(int *map, int id)
-{
-    for (int i = 0; i < this->getOrder(); i++)
-    {
+int Graph::mapeamento(int *map, int id) {
+    for (int i = 0; i < this->getOrder(); i++) {
         if (map[i] == id)
             return i;
     }
@@ -391,13 +347,11 @@ int Graph::mapeamento(int *map, int id)
 
 // void breadthFirstSearch(ofstream& output_file) {}
 
-void Graph::cleanVisited()
-{
+void Graph::cleanVisited() {
     //Ponteiro para percorrer entre os nos
     Node *n = this->getFirstNode();
 
-    while (n != nullptr)
-    {
+    while (n != nullptr) {
         //Seta o no como nao visitado
         n->setVisited(false);
         //Ponteiro passa a apontar para o proximo no do grafo.
@@ -405,42 +359,43 @@ void Graph::cleanVisited()
     }
 }
 
-Graph* Graph::getVerticeInduzido() {
-    int qtd_vertices,vertice;
+Graph *Graph::getVerticeInduzido() {
+    int qtd_vertices, vertice;
     vector<int> ids_subgrafo;
     ids_subgrafo.clear();
-    cout << "Digite a quantidade de vertices do subgrafo: "<< endl;
+    cout << "Digite a quantidade de vertices do subgrafo: " << endl;
     cin >> qtd_vertices;
-    while(qtd_vertices > this->getOrder()) //loop para digitar ate um valor de ordem valida para o subgrafo induzido
+    while (qtd_vertices > this->getOrder()) //loop para digitar ate um valor de ordem valida para o subgrafo induzido
     {
         cout << "O subgrafo nao pode ser maior que o grafo. Digite um numero valido para vertices do subgrafo: ";
         cin >> qtd_vertices;
-        cout <<endl;
+        cout << endl;
     }
-    int i=0;
-    while(i<qtd_vertices) {
+    int i = 0;
+    while (i < qtd_vertices) {
         //cout <<i;
-        cout << "Digite o " << i+1 << "o vertice do subgrafo:";
+        cout << "Digite o " << i + 1 << "o vertice do subgrafo:";
         cin >> vertice;
-        if(this->searchNode(vertice)) {
+        if (this->searchNode(vertice)) {
             ids_subgrafo.push_back(vertice);
-        }
-        else {
-            while(!this->searchNode(vertice)){ //caso nao exista o vertice no grafo original
+        } else {
+            while (!this->searchNode(vertice)) { //caso nao exista o vertice no grafo original
                 cout << "Vertice invalido. Digite apenas vertices presentes no grafo!" << endl;
-                cout << "Digite o " << i+1 << "o vertice do subgrafo:";
+                cout << "Digite o " << i + 1 << "o vertice do subgrafo:";
                 cin >> vertice;
             }
         }
         i++;
     }
     //subgrafo induzido
-    Graph *subgrafoVInduzido = new Graph(ids_subgrafo.size(), this->getDirected(), this->getWeightedEdge(), this->getWeightedNode());
+    Graph *subgrafoVInduzido = new Graph(ids_subgrafo.size(), this->getDirected(), this->getWeightedEdge(),
+                                         this->getWeightedNode());
     //adiciona arestas no subgrafo
     this->cleanVisited(); //seta tudo como nao visitado
-    for(int i=0;i<ids_subgrafo.size();i++) {
+    for (int i = 0; i < ids_subgrafo.size(); i++) {
         for (int j = i + 1; j < ids_subgrafo.size(); j++)
-            if ((!this->getNode(ids_subgrafo[j])->getVisited() && this->getNode(ids_subgrafo[i])->searchEdge(ids_subgrafo[j]))) { //verifica se tem a aresta no grafo original
+            if ((!this->getNode(ids_subgrafo[j])->getVisited() && this->getNode(ids_subgrafo[i])->searchEdge(
+                    ids_subgrafo[j]))) { //verifica se tem a aresta no grafo original
                 Edge *aresta_aux = this->getNode(ids_subgrafo[i])->getEdge(
                         ids_subgrafo[j]);
                 subgrafoVInduzido->insertEdge(ids_subgrafo[i], ids_subgrafo[j], aresta_aux->getWeight());
@@ -448,45 +403,42 @@ Graph* Graph::getVerticeInduzido() {
 
         this->getNode(ids_subgrafo[i])->setVisited(true); //altera para visitado
     }
-    cout << "Grafo construido!" <<endl;
-    cout << "Num de vertices:" <<subgrafoVInduzido->getOrder() << endl;
-    cout << "Num de arestas: " << subgrafoVInduzido->getNumberEdges()<<endl;
+    cout << "Grafo construido!" << endl;
+    cout << "Num de vertices:" << subgrafoVInduzido->getOrder() << endl;
+    cout << "Num de arestas: " << subgrafoVInduzido->getNumberEdges() << endl;
 
     return subgrafoVInduzido;
 }
 
-void Graph::imprimirAgmByKruskal(ofstream &outputfile, int ordem,int numero_arestas, Aresta_aux arestas_finais[])
-{
+void Graph::imprimirAgmByKruskal(ofstream &outputfile, int ordem, int numero_arestas, Aresta_aux arestas_finais[]) {
     cout << "---ALGORITMO DE KRUSKAL---" << endl;
     int somatorio_pesos = 0;
-    cout<< "---ESTRUTURA APRESENTADA---:"<<endl;
+    cout << "---ESTRUTURA APRESENTADA---:" << endl;
     cout << "(NO ORIGEM -- N0 DESTINO) - PESO do NO" << endl;
     cout << "-------------------------------" << endl;
 
-    for (int i = 0; i < numero_arestas; i++)
-    {
-        cout << "(" << arestas_finais[i].origem << " -- " << arestas_finais[i].destino << ") - " << arestas_finais[i].peso << endl;
+    for (int i = 0; i < numero_arestas; i++) {
+        cout << "(" << arestas_finais[i].origem << " -- " << arestas_finais[i].destino << ") - "
+             << arestas_finais[i].peso << endl;
         somatorio_pesos += arestas_finais[i].peso;
     }
-    cout << "ORDEM DO SUBGRAFO:" <<" "<< ordem << endl;
+    cout << "ORDEM DO SUBGRAFO:" << " " << ordem << endl;
     cout << "NUMERO de ARESTAS: " << numero_arestas << endl;
     cout << "SOMATORIO FINAL DOS PESOS: " << somatorio_pesos << endl;
 
     cout << "-------------------------------" << endl;
     //saida dot
-   outputfile << "graph {" << endl;
-   for (int i = 0; i < numero_arestas; i++)
-   {
-       outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
-       outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
-   }
-   outputfile << "}" << endl;
+    outputfile << "graph {" << endl;
+    for (int i = 0; i < numero_arestas; i++) {
+        outputfile << "  " << arestas_finais[i].origem << " -- " << arestas_finais[i].destino;
+        outputfile << " [label = " << arestas_finais[i].peso << "]" << endl;
+    }
+    outputfile << "}" << endl;
 }
+
 //verifica se a aresta ja ta na lista
-bool Graph::arestaNaLista( Aresta_aux listEdges[], int id, int destino, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
+bool Graph::arestaNaLista(Aresta_aux listEdges[], int id, int destino, int size) {
+    for (int i = 0; i < size; i++) {
         if (listEdges[i].origem == destino && listEdges[i].destino == id)
             return true;
     }
@@ -494,25 +446,21 @@ bool Graph::arestaNaLista( Aresta_aux listEdges[], int id, int destino, int size
 }
 
 // trocar 2 elementos
-void trocar(Aresta_aux *a1,  Aresta_aux *a2)
-{
+void trocar(Aresta_aux *a1, Aresta_aux *a2) {
     Aresta_aux troca = *a1;
     *a1 = *a2;
     *a2 = troca;
 }
 
 //ordenar os elementos a partir de um pivo
-int particao(Aresta_aux vetor[], int menor, int maior)
-{
+int particao(Aresta_aux vetor[], int menor, int maior) {
     // pivo
     int elemento_pivo = vetor[maior].peso;
 
     int i = (menor - 1);
 
-    for (int j = menor; j <= maior - 1; j++)
-    {
-        if (vetor[j].peso <= elemento_pivo)
-        {
+    for (int j = menor; j <= maior - 1; j++) {
+        if (vetor[j].peso <= elemento_pivo) {
             i++;
             trocar(&vetor[i], &vetor[j]);
         }
@@ -520,20 +468,19 @@ int particao(Aresta_aux vetor[], int menor, int maior)
     trocar(&vetor[i + 1], &vetor[maior]);
     return (i + 1);
 }
+
 //ordenar vetor de arestas
-void quickSort(Aresta_aux vetor[], int menor, int maior)
-{
-    if (menor < maior)
-    {
+void quickSort(Aresta_aux vetor[], int menor, int maior) {
+    if (menor < maior) {
         int indice = particao(vetor, menor, maior); //indice particionamento
         quickSort(vetor, menor, indice - 1);
         quickSort(vetor, indice + 1, maior);
     }
 }
-void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
-{
-    if(grafo->getNumberEdges() == 0){ //caso nao haja nenhuma aresta formada no subgrafo
-        cout<<"Este subgrafo nao contem arestas!"<<endl;
+
+void Graph::agmByKruskal(ofstream &outputFile, Graph *grafo) {
+    if (grafo->getNumberEdges() == 0) { //caso nao haja nenhuma aresta formada no subgrafo
+        cout << "Este subgrafo nao contem arestas!" << endl;
         return;
     }
     Node *p = grafo->getFirstNode(); //ponteiro para os nos
@@ -541,19 +488,19 @@ void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
     int numArestas_grafo = grafo->getNumberEdges(); //numero de arestas do subgrafo
     Aresta_aux *lista_arestas = new Aresta_aux[numArestas_grafo]; //lista com as arestas
 
-    int i=0; //contador
-    while(p!= nullptr){ //percorre o subgrafo induzido preenchendo peso,origem e destino da aresta
-        aresta=p->getFirstEdge();
-        while (aresta!= nullptr){
-            if(!arestaNaLista(lista_arestas,p->getId(),aresta->getTargetId(),i)){
-                lista_arestas[i].origem=p->getId();
-                lista_arestas[i].destino=aresta->getTargetId();
-                lista_arestas[i].peso=aresta->getWeight();
+    int i = 0; //contador
+    while (p != nullptr) { //percorre o subgrafo induzido preenchendo peso,origem e destino da aresta
+        aresta = p->getFirstEdge();
+        while (aresta != nullptr) {
+            if (!arestaNaLista(lista_arestas, p->getId(), aresta->getTargetId(), i)) {
+                lista_arestas[i].origem = p->getId();
+                lista_arestas[i].destino = aresta->getTargetId();
+                lista_arestas[i].peso = aresta->getWeight();
                 i++;
             }
-            aresta=aresta->getNextEdge();
+            aresta = aresta->getNextEdge();
         }
-        p=p->getNextNode();
+        p = p->getNextNode();
     }
 
     quickSort(lista_arestas, 0, numArestas_grafo - 1); //ordenando vetor de arestas
@@ -573,8 +520,7 @@ void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
     {
         int x = lista_arestas[i].origem;
         int y = lista_arestas[i].destino;
-        if (vArestas[x] != vArestas[y])
-        {
+        if (vArestas[x] != vArestas[y]) {
             arestas_finais[atual] = lista_arestas[i];
             atual++;
             numero_arestas++;
@@ -582,14 +528,13 @@ void Graph::agmByKruskal( ofstream &outputFile,Graph *grafo)
             int id_novo = vArestas[y]; //vertice novo recebe destino
             for (int j = 0; j < numArestas_grafo; j++) //atualiza o vetor para indices do id destino(novo)
             {
-                if (vArestas[j] == id_antigo)
-                {
+                if (vArestas[j] == id_antigo) {
                     vArestas[j] = id_novo;
                 }
             }
         }
     }
-    imprimirAgmByKruskal(outputFile,grafo->getOrder(), numero_arestas, arestas_finais);
+    imprimirAgmByKruskal(outputFile, grafo->getOrder(), numero_arestas, arestas_finais);
 
     //desalocando
     delete[] arestas_finais;
@@ -647,7 +592,7 @@ void Graph::imprimirFechoTransitivoIndireto(ofstream &output_file, int id) {
     for (x = fechoIndireto.begin(); x != fechoIndireto.end(); x++) {
         cout << *x << " ";
     }
-    cout << "||||"<<endl;
+    cout << "||||" << endl;
 
 }
 
@@ -664,7 +609,7 @@ void Graph::imprimirFechoTransitivoDireto(ofstream &output_file, int id) {
     for (x = fechoDireto.begin(); x != fechoDireto.end(); x++) {
         cout << *x << " ";
     }
-    cout << "||||"<<endl;
+    cout << "||||" << endl;
 }
 
 list<int> Graph::getFechoTransitivoDireto(list<int> &fechoDireto, int *id) {
@@ -707,17 +652,17 @@ float Graph::localClusteringCoefficient(int idNode) {
     float dv = 0;
     float P = 0;
 
-    if(node != nullptr) {
+    if (node != nullptr) {
         dv = node->getInDegree();
         edge = node->getFirstEdge();
         float idEdge;
-        while(edge != nullptr) {
+        while (edge != nullptr) {
             idEdge = edge->getTargetId();
             node2 = this->getNode(idEdge);
             // Acessa a lista de adj da lista de adj de idNode
             if (node2 != nullptr) {
                 edge2 = node2->getFirstEdge();
-                while(edge2 != nullptr) {
+                while (edge2 != nullptr) {
                     P += this->countNodeInAdjList(edge2->getTargetId(), idNode);
                     // cout << P << endl;
                     edge2 = edge2->getNextEdge();
@@ -726,10 +671,10 @@ float Graph::localClusteringCoefficient(int idNode) {
             edge = edge->getNextEdge();
         }
     }
-    if(dv != 1) {
-        dv=dv*(dv-1);
+    if (dv != 1) {
+        dv = dv * (dv - 1);
     }
-    ccValue = float(P/dv);
+    ccValue = float(P / dv);
     // cout << P << "/" << dv << endl;
     return ccValue;
 }
@@ -757,13 +702,13 @@ float Graph::averageClusteringCoefficient() {
     int id;
     float result;
 
-    while(node != nullptr) {
+    while (node != nullptr) {
         id = node->getId();
         ccValueTotal += this->localClusteringCoefficient(id);
         node = node->getNextNode();
     }
 
-    result = ccValueTotal/this->getOrder();
+    result = ccValueTotal / this->getOrder();
 
     return result;
 }
@@ -788,8 +733,7 @@ void Graph::printGraph() {
                 cout << "null" << endl;
                 node = node->getNextNode();
             }
-        }
-        else {
+        } else {
             while (node != nullptr) {
                 edge = node->getFirstEdge();
                 cout << node->getId() << " -> ";
@@ -803,18 +747,13 @@ void Graph::printGraph() {
                 node = node->getNextNode();
             }
         }
-    }
-    else
-    {
-        if (this->getWeightedEdge())
-        {
-            while (node != nullptr)
-            {
+    } else {
+        if (this->getWeightedEdge()) {
+            while (node != nullptr) {
                 edge = node->getFirstEdge();
                 cout << node->getId() << " - ";
 
-                while (edge != nullptr)
-                {
+                while (edge != nullptr) {
                     cout << edge->getTargetId() << " -(" << edge->getWeight() << ")- ";
                     edge = edge->getNextEdge();
                 }
@@ -822,16 +761,12 @@ void Graph::printGraph() {
                 cout << "null" << endl;
                 node = node->getNextNode();
             }
-        }
-        else
-        {
-            while (node != nullptr)
-            {
+        } else {
+            while (node != nullptr) {
                 edge = node->getFirstEdge();
                 cout << node->getId() << " -> ";
 
-                while (edge != nullptr)
-                {
+                while (edge != nullptr) {
                     cout << edge->getTargetId() << " - ";
                     edge = edge->getNextEdge();
                 }
@@ -853,15 +788,13 @@ void Graph::printGraphDot(ofstream &file) {
         // Verifica se é ou não direcionado
         if (this->getDirected()) {
             file << "digraph { \n";
-        }
-        else {
+        } else {
             file << "strict graph { \n";
         }
 
         // Verifica se o nó tem peso
         if (this->getWeightedNode()) {
-            while (node != nullptr)
-            {
+            while (node != nullptr) {
                 file << "   " << node->getId() << " [weight = ";
                 file << node->getWeight() << "] \n";
                 node = node->getNextNode();
@@ -872,13 +805,11 @@ void Graph::printGraphDot(ofstream &file) {
 
         while (node != nullptr) {
             edge = node->getFirstEdge();
-            while (edge != nullptr)
-            {
+            while (edge != nullptr) {
                 file << "   " << node->getId();
                 if (this->getDirected()) {
                     file << "->";
-                }
-                else {
+                } else {
                     file << "--";
                 }
                 file << edge->getTargetId();
@@ -894,21 +825,156 @@ void Graph::printGraphDot(ofstream &file) {
         }
 
         file << "} \n";
-    }
-    else {
+    } else {
         cout << "Falha ao abrir o arquivo";
     }
 }
 
+int Graph::getNumberInMap(int id, map<Node *, int> m) {
+    map<Node *, int>::iterator it;
+
+    for (it = m.begin(); it != m.end(); it++) {
+        if (it->first->getId() == id) {
+            return it->second;
+        }
+    }
+    return -1;
+
+}
+
+void Graph::minimalPathByFloyd(int id_one, int id_two) {
+
+    float infinity = std::numeric_limits<float>::max();
+
+    Matriz *a = nullptr;
+    if (this->getDirected()) {
+        a = new Matriz(this->getOrder(), this->getOrder(), false);
+    } else {
+        a = new Matriz(this->getOrder(), this->getOrder(), true);
+    }
+
+    map<Node *, int> m;
+
+    for (int i = 0; i < this->getOrder(); i++) {
+        for (int j = 0; j < this->getOrder(); j++) {
+            if (i == j)
+                a->set(i, j, 0);
+            else
+                a->set(i, j, infinity);
+        }
+    }
+
+    int number_node = 0;
+    for (Node *p = this->getFirstNode(); p != nullptr; p = p->getNextNode()) {
+        m[p] = number_node;
+        number_node++;
+    }
+
+    for (Node *p = this->getFirstNode(); p != nullptr; p = p->getNextNode()) {
+        for (Edge *t = p->getFirstEdge(); t != nullptr; t = t->getNextEdge()) {
+            a->set(m[p], getNumberInMap(t->getTargetId(), m), t->getWeight());
+        }
+    }
+
+    for (int k = 0; k < this->getOrder(); k++) {
+        for (int i = 0; i < this->getOrder(); i++) {
+            for (int j = 0; j < this->getOrder(); j++) {
+                if (a->get(i, k) + a->get(k, j) < a->get(i, j)) {
+                    a->set(i, j, a->get(i, k) + a->get(k, j));
+                }
+            }
+        }
+    }
+
+    cout << "O caminho mínimo entre os vértices " << id_one << " e " << id_two << ": "
+         << a->get(getNumberInMap(id_one, m), getNumberInMap(id_two, m)) << endl;
+
+    delete a;
+}
+
+bool auxPrimContainsNode(int k, list<Node *> v) {
+    list<Node *>::iterator it_v;
+    for (it_v = v.begin(); it_v != v.end(); it_v++) {
+        if ((*it_v)->getId() == k) {
+            return true;
+        }
+    }
+    return false;
+}
+
+EdgeLinkedNode *Graph::getLighterEdge(list<Node *> t, list<Node *> v) {
+    EdgeLinkedNode *r = new EdgeLinkedNode;
+    float infinity = std::numeric_limits<float>::max();
+    r->k = new Node(-1);
+    r->e = new Edge(-1);
+    r->e->setWeight(infinity);
+
+    list<Node *>::iterator j;
+
+    for (j = t.begin(); j != t.end(); j++) {
+        for (Edge *k = (*j)->getFirstEdge(); k != nullptr; k = k->getNextEdge()) {
+            if (auxPrimContainsNode(k->getTargetId(), v)) {
+                if (k->getWeight() < r->e->getWeight()) {
+                    r->e = k;
+                    r->k = this->getNode(k->getTargetId());
+                    r->id_origem = (*j)->getId();
+                }
+            }
+        }
+    }
+
+    return r;
+
+}
 
 
+void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
+    if (g->getNumberEdges() == 0) {
+        cout << "Este subgrafo nao contem arestas!" << endl;
+        return;
+    }
 
+    float sum_weights = 0;
 
+    list<Node *> t;
+    t.push_back(g->getFirstNode());
 
+    list<Node *> v;
+    for (Node *p = g->getFirstNode()->getNextNode(); p != nullptr; p = p->getNextNode()) {
+        v.push_back(p);
+    }
 
+    list<Edge *> t_min;
 
+    int tam = t.size() + v.size();
 
+    while (t.size() != tam) {
+        EdgeLinkedNode *r = getLighterEdge(t, v);
+        if (r->e->getWeight() == std::numeric_limits<float>::max() and r->k->getId() == -1) {
+            cout << "Nao e possivel gerar uma Árvore Geradora Mínima." << endl << "Grafo nao conexo!" << endl;
+            return;
+        }
+        r->e->setOrigem(r->id_origem);
+        t.push_back(r->k);
 
+        list<Node *> aux;
+        list<Node *>::iterator n;
+        for (n = v.begin(); n != v.end(); n++) {
+            if ((*n)->getId() != r->k->getId())
+                aux.push_back(*n);
+        }
 
+        t_min.push_back(r->e);
+        v = aux;
+        sum_weights += r->e->getWeight();
 
+    }
 
+    list<Edge *>::iterator edge;
+
+    for (edge = t_min.begin(); edge != t_min.end(); ++edge) {
+        cout << "(" << (*edge)->getOrigem() << ", " << (*edge)->getTargetId() << ") => " << (*edge)->getWeight()
+             << endl;
+    }
+    cout << "Somatorio final dos pesos das arestas: " << sum_weights << endl;
+}
