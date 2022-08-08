@@ -10,6 +10,8 @@
 #include <stack>
 #include <list>
 #include <map>
+#include <vector>
+#include <tuple>
 
 using namespace std;
 struct Aresta_aux {
@@ -36,10 +38,17 @@ private:
     bool weighted_node;
     Node *first_node;
     Node *last_node;
+    int cluster;
+    string clusterType;
+    vector<tuple<int, int>> clustersLimits;
+    double clustersCapacity;
+
 
 public:
     //Constructor
     Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
+    Graph(int order, int cluster, string clusterType, vector<tuple<int, int>> clustersLimits);
+    Graph(int order, int cluster, double clustersCapacity);
 
     //Destructor
     ~Graph();

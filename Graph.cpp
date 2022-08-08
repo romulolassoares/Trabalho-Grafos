@@ -35,6 +35,26 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node) {
     this->number_edges = 0;
 }
 
+Graph::Graph(int order, int cluster, string clusterType, vector<tuple<int, int>> clustersLimits) {
+    this->order = order;
+    this->cluster = cluster;
+    this->clusterType = clusterType;
+    this->clustersLimits = clustersLimits;
+    this->first_node = this->last_node = nullptr;
+    this->weighted_edge = 1;
+    this->weighted_node = 1;
+}
+
+Graph::Graph(int order, int cluster, double clustersCapacity) {
+    this->order = order;
+    this->cluster = cluster;
+    this->clustersCapacity = clustersCapacity;
+    this->first_node = this->last_node = nullptr;
+    this->weighted_edge = 1;
+    this->weighted_node = 1;
+}
+
+
 // Destructor
 Graph::~Graph() {
     Node *next_node = this->first_node;
