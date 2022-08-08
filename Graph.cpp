@@ -106,6 +106,31 @@ void Graph::insertNode(int id) {
     }
 }
 
+void Graph::insertNodeAndWeight(int id, int weight) {
+    Node *next;
+    Node *aux = nullptr;
+
+    // Verifica se já existe algum nó
+    if (this->getFirstNode() == nullptr) {
+        this->first_node = new Node(id);
+        this->first_node->setWeight(weight);
+        this->last_node = this->getFirstNode();
+    } else {
+        if (!this->searchNode(id)) {
+            next = this->getFirstNode();
+            // Procura o último nó inserido
+            while (next != nullptr) {
+                aux = next;
+                next = next->getNextNode();
+            }
+            // Inseri o nó na última posição
+            aux->setNextNode(new Node(id));
+            this->last_node = this->getNode(id);
+            this->last_node->setWeight(weight);
+        }
+    }
+}
+
 void Graph::insertEdge(int id, int target_id, float weight) {
     // Procura se o nó id existe. Se não existir insere ele no grafo
     if (!this->searchNode(id)) {
@@ -785,6 +810,13 @@ void Graph::printGraphDot(ofstream &file) {
         Node *node = this->getFirstNode();
         Edge *edge;
 
+        vector<bool> visited;
+
+        while (node != nullptr) {
+            visited.push_back(false);
+            node = node->getNextNode();
+        }
+
         // Verifica se é ou não direcionado
         if (this->getDirected()) {
             file << "digraph { \n";
@@ -804,22 +836,27 @@ void Graph::printGraphDot(ofstream &file) {
         node = this->getFirstNode();
 
         while (node != nullptr) {
-            edge = node->getFirstEdge();
-            while (edge != nullptr) {
-                file << "   " << node->getId();
-                if (this->getDirected()) {
-                    file << "->";
-                } else {
-                    file << "--";
-                }
-                file << edge->getTargetId();
+            if(!visited.at(node->getId())) {
+                visited.at(node->getId()) = true;
+                edge = node->getFirstEdge();
+                while (edge != nullptr) {
+                    if(!visited.at(edge->getTargetId())) {
+                        file << "   " << node->getId();
+                        if (this->getDirected()) {
+                            file << " -> ";
+                        } else {
+                            file << " -- ";
+                        }
+                        file << edge->getTargetId();
 
-                if (this->getWeightedEdge()) {
-                    file << " [label=" << edge->getWeight();
-                    file << ",weight=" << edge->getWeight() << "]";
+                        if (this->getWeightedEdge()) {
+                            file << " [label=" << edge->getWeight();
+                            file << ",weight=" << edge->getWeight() << "]";
+                        }
+                        file << "\n";
+                    }
+                    edge = edge->getNextEdge();
                 }
-                file << "\n";
-                edge = edge->getNextEdge();
             }
             node = node->getNextNode();
         }

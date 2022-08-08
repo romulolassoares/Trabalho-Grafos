@@ -61,6 +61,7 @@ public:
 
     //Other methods
     void insertNode(int id);
+    void insertNodeAndWeight(int id, int weight);
 
     void insertEdge(int id, int target_id, float weight);
 
