@@ -236,7 +236,7 @@ int main(int argc, char const *argv[]) {
     if (argc != 6) {
 
         cout
-                << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> "
+                << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <instance>"
                 << endl;
         return 1;
 
