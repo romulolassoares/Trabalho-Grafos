@@ -7,74 +7,71 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <chrono>
-#include <vector>
-
 #include "Graph.h"
 #include "Node.h"
 
 using namespace std;
 
-Graph *leituraRR(ifstream &input_file, int directed) {
+Graph *leitura(ifstream &input_file, int directed, int weightedEdge, int weightedNode) {
 
     //Variáveis para auxiliar na criação dos nós no Grafo
     int idNodeSource;
     int idNodeTarget;
-    int order; // Number of elements
-    int cluster; // Number of clusters
-    string clusterType; // Type of cluster
-    vector<tuple<int, int>> clustersLimits; // Array of clusters limits
-    int lower;
-    int upper;
-    vector<int> weights;
-    char w;
-    int elementA, elementB;
-    float distance;
-    vector<tuple<int, int, float>> elements;
-
-    //Criando objeto grafo
+    int order;
 
     //Pegando a ordem do grafo
     input_file >> order;
-    input_file >> cluster;
-    input_file >> clusterType;
-    
-    Graph *graph = new Graph(order, 0, 1, 1);
 
-    cout << order << " " << cluster << " " << clusterType << endl;
+    //Criando objeto grafo
+    Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
 
-    // Get cluster limits
-    for (int i = 0; i < cluster; i++) {
-        input_file >> lower >> upper;
-        tuple<int, int> t(lower, upper);
-        cout << get<0>(t) << ";" << get<1>(t) << " - ";
-        clustersLimits.push_back(t);
+    //Leitura de arquivo
+
+    if (!graph->getWeightedEdge() && !graph->getWeightedNode()) {
+
+        while (input_file >> idNodeSource >> idNodeTarget) {
+
+            graph->insertEdge(idNodeSource, idNodeTarget, 0);
+
+        }
+
+    } else if (graph->getWeightedEdge() && !graph->getWeightedNode()) {
+
+        float edgeWeight;
+
+        while (input_file >> idNodeSource >> idNodeTarget >> edgeWeight) {
+
+            graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
+
+        }
+
+    } else if (graph->getWeightedNode() && !graph->getWeightedEdge()) {
+
+        float nodeSourceWeight, nodeTargetWeight;
+
+        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight) {
+
+            graph->insertEdge(idNodeSource, idNodeTarget, 0);
+            graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
+            graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
+
+        }
+
+    } else if (graph->getWeightedNode() && graph->getWeightedEdge()) {
+
+        float nodeSourceWeight, nodeTargetWeight, edgeWeight;
+
+        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight) {
+
+            graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
+            graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
+            graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
+
+        }
+
     }
-
-    cout << endl;
-
-    input_file >> w;
-
-    // Get nodes weights
-    int aux;
-    for (int i = 0; i < order; i++) {
-        input_file >> aux;
-        // cout << "weights[" << i << "]" << aux << endl;
-        graph->insertNodeAndWeight(i, aux);
-        weights.push_back(aux);
-    }
-
-    // Get elements and distance
-    while (input_file >> elementA >> elementB >> distance) {
-        tuple<int, int, float> t(elementA, elementB, distance);
-        // cout << get<0>(t) << ";" << get<1>(t) << ";" << get<2>(t) << " - ";
-        graph->insertEdge(elementA, elementB, distance);
-        elements.push_back(t);
-    }
-
-    // cout << order << " " << cluster << " " << clusterType << endl;
 
     return graph;
-    // return graph;
 }
 
 Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, int weightedNode) {
@@ -260,19 +257,18 @@ int main(int argc, char const *argv[]) {
     Graph *graph;
     if (input_file.is_open()) {
         auto start = chrono::steady_clock::now();
-        graph = leituraRR(input_file, atoi(argv[3]));
+        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
         auto end = chrono::steady_clock::now();
         cout << "Demorou  "
              << chrono::duration_cast<chrono::milliseconds>(end - start).count()
              << " ms para ler o arquivo de entrada." << endl;
-        // cout << graph << endl;
         // graph->printGraph();
-        graph->printGraphDot(output_file);
+        // graph->printGraphDot(output_file);
 
     } else
         cout << "Unable to open " << argv[1];
 
-    // mainMenu(output_file, graph);
+    mainMenu(output_file, graph);
 
     //Fechando arquivo de entrada
     input_file.close();

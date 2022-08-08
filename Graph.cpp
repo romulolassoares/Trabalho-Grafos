@@ -106,6 +106,31 @@ void Graph::insertNode(int id) {
     }
 }
 
+void Graph::insertNodeAndWeight(int id, int weight) {
+    Node *next;
+    Node *aux = nullptr;
+
+    // Verifica se já existe algum nó
+    if (this->getFirstNode() == nullptr) {
+        this->first_node = new Node(id);
+        this->first_node->setWeight(weight);
+        this->last_node = this->getFirstNode();
+    } else {
+        if (!this->searchNode(id)) {
+            next = this->getFirstNode();
+            // Procura o último nó inserido
+            while (next != nullptr) {
+                aux = next;
+                next = next->getNextNode();
+            }
+            // Inseri o nó na última posição
+            aux->setNextNode(new Node(id));
+            this->last_node = this->getNode(id);
+            this->last_node->setWeight(weight);
+        }
+    }
+}
+
 void Graph::insertEdge(int id, int target_id, float weight) {
     // Procura se o nó id existe. Se não existir insere ele no grafo
     if (!this->searchNode(id)) {
