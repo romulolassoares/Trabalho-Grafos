@@ -4,7 +4,10 @@
 
 g++ *.c* -o execGrupoX
 
-#./execGrupoX <arquivo_entrada> <arquivo_saida> <Opc_Direc> <Opc_Peso_Aresta> <Opc_Peso_Nos>
+#./execGrupoX <arquivo_entrada> <arquivo_saida> <tipo_instancia>
+# Tipo de Instância
+# 0 - Arquivos RanReal e Sparse
+# 1 - Handover
  
-./execGrupoX files/inputFile.txt files/outputFile.txt 0 1 0
-#./execGrupoX files/inputFile.txt files/outputFile.txt 0 0 0
+./execGrupoX instancias/30_5_270003 files/outputFile5.dot 1
+# ./execGrupoX instancias/RanReal240_01.txt files/outputFile5.dot 0

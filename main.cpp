@@ -14,7 +14,7 @@
 
 using namespace std;
 
-Graph *leituraRR(ifstream &input_file, int directed) {
+Graph *leituraRR(ifstream &input_file) {
 
     //Variáveis para auxiliar na criação dos nós no Grafo
     int idNodeSource;
@@ -70,6 +70,77 @@ Graph *leituraRR(ifstream &input_file, int directed) {
         graph->insertEdge(elementA, elementB, distance);
         elements.push_back(t);
     }
+
+    // cout << order << " " << cluster << " " << clusterType << endl;
+
+    return graph;
+    // return graph;
+}
+
+Graph *leituraHandover(ifstream &input_file) {
+
+    //Variáveis para auxiliar na criação dos nós no Grafo
+    int idNodeSource;
+    int idNodeTarget;
+    int order; // Number of elements
+    int cluster; // Number of clusters
+    string clusterType; // Type of cluster
+    double clustersCapacity; // Array of clusters limits
+
+    vector<int> weights;
+    char w;
+    int elementA, elementB;
+    float distance;
+    // vector<tuple<int, int, float>> elements;
+    vector<vector<int>> elements;
+
+
+    //Criando objeto grafo
+
+    //Pegando a ordem do grafo
+    input_file >> order;
+    input_file >> cluster;
+    
+    Graph *graph = new Graph(order, 0, 1, 1);
+
+    input_file >> clustersCapacity;
+
+    // cout << order << " " << cluster << " " << clusterType << " " << clustersCapacity << endl;
+
+    cout << endl;
+    // Get nodes weights
+    double aux;
+    for (int i = 0; i < order; i++) {
+        input_file >> aux;
+        // cout << "weights[" << i << "]: " << aux << endl;
+        graph->insertNodeAndWeight(i, aux);
+        weights.push_back(aux);
+    }
+
+    for(int i = 0; i < order; i++) {
+        vector<int> line;
+        for(int j = 0; j < order; j++) {
+            int aux;
+            input_file >> aux;
+            line.push_back(aux);
+        }
+        elements.push_back(line);
+    }
+    for(int i = 0; i < order; i++) {
+        vector<int> line = elements.at(i);
+        for(int j = 0; j < order; j++) {
+            if(line.at(j) != 0) {
+                graph->insertEdge(i, j, line.at(j));
+            }
+        }
+    }
+    // // Get elements and distance
+    // while (input_file >> elementA >> elementB >> distance) {
+    //     tuple<int, int, float> t(elementA, elementB, distance);
+    //     // cout << get<0>(t) << ";" << get<1>(t) << ";" << get<2>(t) << " - ";
+    //     graph->insertEdge(elementA, elementB, distance);
+    //     elements.push_back(t);
+    // }
 
     // cout << order << " " << cluster << " " << clusterType << endl;
 
@@ -232,15 +303,17 @@ int mainMenu(ofstream &output_file, Graph *graph) {
 
 int main(int argc, char const *argv[]) {
 
+    int fileType;
+
     //Verificação se todos os parâmetros do programa foram entrados
-    if (argc != 6) {
+    // if (argc != 6) {
 
-        cout
-                << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> "
-                << endl;
-        return 1;
+    //     cout
+    //             << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <instance>"
+    //             << endl;
+    //     return 1;
 
-    }
+    // }
 
     string program_name(argv[0]);
     string input_file_name(argv[1]);
@@ -256,11 +329,22 @@ int main(int argc, char const *argv[]) {
     ofstream output_file;
     input_file.open(argv[1], ios::in);
     output_file.open(argv[2], ios::out | ios::trunc);
+    fileType = atoi(argv[3]);
 
     Graph *graph;
     if (input_file.is_open()) {
         auto start = chrono::steady_clock::now();
-        graph = leituraRR(input_file, atoi(argv[3]));
+
+        if(fileType == 0) {
+            graph = leituraRR(input_file);
+        } else if(fileType == 1) {
+            graph = leituraHandover(input_file);
+        } else {
+            cout << "Opção errada" << endl;
+        }
+        
+
+
         auto end = chrono::steady_clock::now();
         cout << "Demorou  "
              << chrono::duration_cast<chrono::milliseconds>(end - start).count()

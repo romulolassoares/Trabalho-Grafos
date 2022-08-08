@@ -127,6 +127,7 @@ void Graph::insertNodeAndWeight(int id, int weight) {
             aux->setNextNode(new Node(id));
             this->last_node = this->getNode(id);
             this->last_node->setWeight(weight);
+            // cout << "TEST" << endl;
         }
     }
 }
@@ -816,7 +817,7 @@ void Graph::printGraphDot(ofstream &file) {
             visited.push_back(false);
             node = node->getNextNode();
         }
-
+        node = this->getFirstNode();
         // Verifica se é ou não direcionado
         if (this->getDirected()) {
             file << "digraph { \n";
@@ -825,7 +826,9 @@ void Graph::printGraphDot(ofstream &file) {
         }
 
         // Verifica se o nó tem peso
-        if (this->getWeightedNode()) {
+        cout << this->getWeightedNode() << endl;
+        if (this->getWeightedNode() == 1) {
+            cout << "ee01" << endl;
             while (node != nullptr) {
                 file << "   " << node->getId() << " [weight = ";
                 file << node->getWeight() << "] \n";
