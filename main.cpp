@@ -38,7 +38,7 @@ Graph *leituraRR(ifstream &input_file) {
     input_file >> cluster;
     input_file >> clusterType;
     
-    Graph *graph = new Graph(order, 0, 1, 1);
+    // Graph *graph = new Graph(order, 0, 1, 1);
 
     cout << order << " " << cluster << " " << clusterType << endl;
 
@@ -53,6 +53,8 @@ Graph *leituraRR(ifstream &input_file) {
     cout << endl;
 
     input_file >> w;
+
+    Graph *graph = new Graph(order, cluster, clusterType, clustersLimits);
 
     // Get nodes weights
     int aux;
@@ -72,7 +74,7 @@ Graph *leituraRR(ifstream &input_file) {
     }
 
     // cout << order << " " << cluster << " " << clusterType << endl;
-
+    graph->agmGuloso(clustersLimits);
     return graph;
     // return graph;
 }
@@ -101,13 +103,15 @@ Graph *leituraHandover(ifstream &input_file) {
     input_file >> order;
     input_file >> cluster;
     
-    Graph *graph = new Graph(order, 0, 1, 1);
 
     input_file >> clustersCapacity;
 
     // cout << order << " " << cluster << " " << clusterType << " " << clustersCapacity << endl;
 
     cout << endl;
+
+    Graph *graph = new Graph(order, cluster, clustersCapacity);
+
     // Get nodes weights
     double aux;
     for (int i = 0; i < order; i++) {
