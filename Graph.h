@@ -42,6 +42,10 @@ private:
     string clusterType;
     vector<tuple<int, int>> clustersLimits;
     double clustersCapacity;
+    float inferiorLimit;
+    float upperLimit;
+    float currentLimit;
+    float maxBenefit;
 
 
 public:
@@ -49,6 +53,7 @@ public:
     Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
     Graph(int order, int cluster, string clusterType, vector<tuple<int, int>> clustersLimits);
     Graph(int order, int cluster, double clustersCapacity);
+    Graph(int inferiorLimit, int upperLimit);
 
     //Destructor
     ~Graph();
@@ -133,6 +138,9 @@ public:
     void minimalPathByFloyd(int id_one, int id_two);
 
     void minimalSpanningTreeByPrimAlgorithm(Graph *g);
+
+    vector<Graph*> guloso(vector<tuple<int, int>> clustersLimits, bool random, float *result, float alfa);
+    void agmGuloso(vector<tuple<int,int>> limitClusters);
 
 private:
     //Auxiliar methods

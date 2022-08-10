@@ -74,7 +74,7 @@ Graph *leituraRR(ifstream &input_file) {
     }
 
     // cout << order << " " << cluster << " " << clusterType << endl;
-
+    graph->agmGuloso(clustersLimits);
     return graph;
     // return graph;
 }
