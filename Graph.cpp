@@ -17,8 +17,6 @@
 #include "Matriz.h"
 #include <map>
 
-#define INFINITO 10000000
-
 using namespace std;
 
 /**************************************************************************************************
@@ -1051,7 +1049,6 @@ void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
     cout << "Somatorio final dos pesos das arestas: " << sum_weights << endl;
 }
 
-
 vector<Graph*> Graph::guloso(vector<tuple<int, int>> clustersLimits, bool random, float *result, float alfa) {
     vector<Graph*> solution;
     *result = 0;
@@ -1308,3 +1305,19 @@ void Graph::agmGuloso(vector<tuple<int,int>> limitClusters) {
     
     // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
 }
+=======
+// GULOSOS
+
+void Graph::greed(){
+    
+}
+
+void Graph::greedRandom(){
+    
+}
+
+void Graph::greedRactiveRandom(){
+    
+}
+
+

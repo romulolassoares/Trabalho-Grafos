@@ -121,11 +121,11 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    float greed();
+    void greed();
 
-    float greedRandom();
+    void greedRandom();
 
-    float greedRactiveRandom();
+    void greedRactiveRandom();
 
     //axiliar methods
     void printGraph();
