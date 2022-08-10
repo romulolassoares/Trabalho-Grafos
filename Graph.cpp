@@ -17,8 +17,6 @@
 #include "Matriz.h"
 #include <map>
 
-#define INFINITO 10000000
-
 using namespace std;
 
 /**************************************************************************************************
@@ -1018,3 +1016,22 @@ void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
     }
     cout << "Somatorio final dos pesos das arestas: " << sum_weights << endl;
 }
+
+// GULOSOS
+
+void Graph::greed(){
+    
+}
+
+void Graph::greedRandom(){
+    
+}
+
+void Graph::greedRactiveRandom(){
+    
+}
+
+
+
+
+

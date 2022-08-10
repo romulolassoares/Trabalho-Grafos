@@ -186,6 +186,9 @@ int menu() {
     cout << "[7] Arvore Geradora Minima - Prim" << endl;
     cout << "[8] Arvore Geradora Minima - Kruskal " << endl;
     cout << "[9] Caminhamento em profundidade " << endl;
+    cout << "[10] Algoritmo construtivo guloso " << endl;
+    cout << "[11] Algoritmo construtivo guloso randomizado e adaptativo " << endl;
+    cout << "[12] Algoritmo construtivo guloso randomizado reativo " << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -270,6 +273,15 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file) {
             cout << "Digite o vértice de inicio: ";
             cin >> id;
             graph->depthFirstSearch(output_file, id);
+        }
+        case 10: {
+            graph->greed();
+        }
+        case 11: {
+            graph->greedRandom();
+        }
+        case 12: {
+            graph->greedRactiveRandom();
         }
         default: {
             cout << "Exit!!!" << endl;
