@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Script to execute the code of graphs
+
+g++ *.c* -o execGrupoX
+
+#./execGrupoX <arquivo_entrada> <arquivo_saida> <tipo_instancia>
+# Tipo de Instância
+# 0 - Arquivos RanReal e Sparse
+# 1 - Handover
+ 
+# ./execGrupoX instancias/30_5_270003 files/outputFile5.dot 1
+./execGrupoX instancias/RanReal240_01.txt files/outputFile5.dot 0
