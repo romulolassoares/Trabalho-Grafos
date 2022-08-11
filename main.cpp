@@ -201,7 +201,7 @@ int menu() {
 
 }
 
-void selecionar(int selecao, Graph *graph,vector<pair<int, int>> limite_dos_clusters ) {
+void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<pair<int, int>> limite_dos_clusters ) {
 
     switch (selecao) {
 
@@ -294,7 +294,7 @@ void selecionar(int selecao, Graph *graph,vector<pair<int, int>> limite_dos_clus
     }
 }
 
-int mainMenu(Graph *graph,vector<tuple<int, int>> limite_dos_clusters) {
+int mainMenu(ofstream &output_file,Graph *graph,vector<tuple<int, int>> limite_dos_clusters) {
 
     int selecao = 1;
 
@@ -303,7 +303,7 @@ int mainMenu(Graph *graph,vector<tuple<int, int>> limite_dos_clusters) {
         selecao = menu();
 
         if (output_file.is_open())
-            selecionar(selecao, graph, limite_dos_clusters);
+            selecionar(ofstream &output_file,selecao, graph, limite_dos_clusters);
 
         else
             cout << "Unable to open the output_file" << endl;

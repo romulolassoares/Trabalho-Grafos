@@ -102,7 +102,7 @@ vector<tuple<int, int>> Graph::define_leitura() {
         limite_dos_clusters = this->leitura(fileIn);
     } else if (this->type_instance == 2)  // RanReal e Sparse
     {
-        limite_dos_clusters = this.leituraR
+        limite_dos_clusters = this.
     } else {
         cout << endl;
        cout << " ERRO! Tipo de Instancia nao presente!"<endl;
