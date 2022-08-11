@@ -126,8 +126,10 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    void agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters);
-    void agmGulosoRandReativ(vector<tuple<int,int>> limite_dos_clusters);
+    vector<Graph*> guloso(vector<tuple<int, int>> clustersLimits, bool random, float *result, float alfa);
+    void agmGuloso();
+    void agmGulosoRandAdap();
+    void agmGulosoRandReativ();
 
 
     //axiliar methods
@@ -142,8 +144,6 @@ public:
 
     void minimalSpanningTreeByPrimAlgorithm(Graph *g);
 
-    vector<Graph*> guloso(vector<tuple<int, int>> clustersLimits, bool random, float *result, float alfa);
-    void agmGuloso(vector<tuple<int,int>> limitClusters);
 
 private:
     //Auxiliar methods

@@ -99,44 +99,6 @@ long inline size_arq(fstream &arq) {
     return size;
 }
 
-vector<tuple<int, int>> Graph::define_leitura() {
-    fstream input_file(static_cast<string>(this->pathArquivoEntrada), std::ios::in);
-    if (!input_file.is_open()) {
-        cout <<endl;
-        std::cerr << "Erro! Arquivo não pode ser aberto!";
-        exit(10);
-    }
-
-    auto bufferSize = size_arq(input_file);
-    std::unique_ptr<char[]> buffer(new char[bufferSize]);
-    input_file.read(buffer.get(), bufferSize);
-    input_file.close();
-    std::stringstream fileIn(buffer.get());  // os dados estao aqui
-    vector<tuple<int, int>> limite_dos_clusters;
-
-
-    cout << this->tipoInstancia << endl;
-    if (this->tipoInstancia == 1)  // Handover
-    {
-        //limite_dos_clusters = make_tuple(-100,100);
-        cout << this->tipoInstancia << endl;
-    } else if (this->tipoInstancia == 2)  // RanReal e Sparse
-    {
-        // limite_dos_clusters = make_tuple(-100,100);
-        cout << this->tipoInstancia << endl;
-    } else {
-        cout << endl;
-        cout << " ERRO! Tipo de Instancia nao presente!"<<endl;
-        exit(-1);
-    }
-
-    /* criaArestas();
-    for (int i = 0; i < this->order; ++i) {
-        this->matrizDistancia[i][i] = 0.0f;
-    } */
-    return limite_dos_clusters;
-}
-
 // Getters
 int Graph::getOrder() {
     return this->order;
@@ -920,9 +882,7 @@ void Graph::printGraphDot(ofstream &file) {
         }
 
         // Verifica se o nó tem peso
-        cout << this->getWeightedNode() << endl;
         if (this->getWeightedNode() == 1) {
-            cout << "ee01" << endl;
             while (node != nullptr) {
                 file << "   " << node->getId() << " [weight = ";
                 file << node->getWeight() << "] \n";
@@ -1348,13 +1308,12 @@ vector<Graph*> Graph::guloso(vector<tuple<int, int>> clustersLimits, bool random
     return solution;
 }
 
-void Graph::agmGuloso(vector<tuple<int,int>> limitClusters) {
+void Graph::agmGuloso() {
     time_t start, end;
     time(&start);
 
     float result = 0;
-
-    vector<Graph*> sol = guloso(limitClusters, 0, &result, 0);
+    vector<Graph*> sol = guloso(this->clustersLimits, 0, &result, 0);
 
     time(&end);
     double time = double(end - start);
@@ -1379,7 +1338,7 @@ void Graph::agmGuloso(vector<tuple<int,int>> limitClusters) {
 // GULOSOS
 
 
-void Graph::agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters){
+void Graph::agmGulosoRandAdap(){
     time_t start, end;
     time(&start);
     float melhor = 0;
@@ -1395,7 +1354,7 @@ void Graph::agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters){
 
     int i=0;
     while(i < 250) {
-        solution = guloso(limite_dos_clusters, 1, &resultado, cof_randomizacao);
+        solution = guloso(this->clustersLimits, 1, &resultado, cof_randomizacao);
         if (resultado > melhor) {
             melhor = resultado;
             best_solution =solution;
@@ -1412,7 +1371,7 @@ void Graph::agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters){
     //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
 }
 
-void Graph::agmGulosoRandReativ(vector<tuple<int,int>> limite_dos_clusters){
+void Graph::agmGulosoRandReativ(){
     time_t start, end;
     time(&start);
 
