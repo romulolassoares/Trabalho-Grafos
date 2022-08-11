@@ -105,7 +105,7 @@ vector<tuple<int, int>> Graph::define_leitura() {
         limite_dos_clusters = this.leituraR
     } else {
         cout << endl;
-       cout << " ERRO! Tipo de Instancia nao presente!"<endl;
+       cout << " ERRO! Tipo de Instancia nao presente!"<<endl;
         exit(-1);
     }
 
