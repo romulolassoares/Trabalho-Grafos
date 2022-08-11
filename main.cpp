@@ -74,9 +74,10 @@ Graph *leituraRR(ifstream &input_file) {
     }
 
     // cout << order << " " << cluster << " " << clusterType << endl;
-    graph->agmGuloso(clustersLimits);
+    graph->agmGuloso();
+    // float result = 0;
+    // vector<Graph*> sol = graph->guloso(0, &result, 0);
     return graph;
-    // return graph;
 }
 
 Graph *leituraHandover(ifstream &input_file) {
@@ -88,7 +89,9 @@ Graph *leituraHandover(ifstream &input_file) {
     int cluster; // Number of clusters
     string clusterType; // Type of cluster
     double clustersCapacity; // Array of clusters limits
-
+    vector<tuple<int, int>> clustersLimits; // Array of clusters limits
+    int lower;
+    int upper;
     vector<int> weights;
     char w;
     int elementA, elementB;
@@ -102,15 +105,20 @@ Graph *leituraHandover(ifstream &input_file) {
     //Pegando a ordem do grafo
     input_file >> order;
     input_file >> cluster;
-    
 
-    input_file >> clustersCapacity;
+    // Get cluster limits
+    input_file >> upper;
+    for (int i = 0; i < cluster; i++) {
+        tuple<int, int> t(0, upper);
+        // cout << get<0>(t) << ";" << get<1>(t) << " - ";
+        clustersLimits.push_back(t);
+    }
 
     // cout << order << " " << cluster << " " << clusterType << " " << clustersCapacity << endl;
 
     cout << endl;
 
-    Graph *graph = new Graph(order, cluster, clustersCapacity);
+    Graph *graph = new Graph(order, cluster, clusterType, clustersLimits);
 
     // Get nodes weights
     double aux;
@@ -121,59 +129,23 @@ Graph *leituraHandover(ifstream &input_file) {
         weights.push_back(aux);
     }
 
+    int y;
+    input_file >> y;
+
+    string linha;
     for(int i = 0; i < order; i++) {
         vector<int> line;
         for(int j = 0; j < order; j++) {
-            int aux;
-            input_file >> aux;
-            line.push_back(aux);
+            getline(input_file, linha, ' ');
+            line.push_back(stof(linha));
+            graph->insertEdge(i, j, line.at(j));
         }
         elements.push_back(line);
     }
-    for(int i = 0; i < order; i++) {
-        vector<int> line = elements.at(i);
-        for(int j = 0; j < order; j++) {
-            if(line.at(j) != 0) {
-                graph->insertEdge(i, j, line.at(j));
-            }
-        }
-    }
-    // // Get elements and distance
-    // while (input_file >> elementA >> elementB >> distance) {
-    //     tuple<int, int, float> t(elementA, elementB, distance);
-    //     // cout << get<0>(t) << ";" << get<1>(t) << ";" << get<2>(t) << " - ";
-    //     graph->insertEdge(elementA, elementB, distance);
-    //     elements.push_back(t);
-    // }
 
-    // cout << order << " " << cluster << " " << clusterType << endl;
-
+    graph->agmGuloso();
     return graph;
     // return graph;
-}
-
-Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, int weightedNode) {
-
-    //Variáveis para auxiliar na criação dos nós no Grafo
-    int idNodeSource;
-    int idNodeTarget;
-    int order;
-    int numEdges;
-
-    //Pegando a ordem do grafo
-    input_file >> order;
-
-    //Criando objeto grafo
-    Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
-
-    //Leitura de arquivo
-    while (input_file >> idNodeSource >> idNodeTarget) {
-
-        graph->insertEdge(idNodeSource, idNodeTarget, 0);
-
-    }
-
-    return graph;
 }
 
 int menu() {
@@ -201,7 +173,7 @@ int menu() {
 
 }
 
-void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<tuple<int, int>> limite_dos_clusters ) {
+void selecionar(ofstream &output_file,int selecao, Graph *graph) {
 
     switch (selecao) {
 
@@ -279,13 +251,13 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<tuple<int
             graph->depthFirstSearch(output_file, id);
         }
         case 10: {
-            graph->agmGuloso(limite_dos_clusters);
+            graph->agmGuloso();
         }
         case 11: {
-            graph->agmGulosoRandAdap(limite_dos_clusters);
+            graph->agmGulosoRandAdap();
         }
         case 12: {
-            graph->agmGulosoRandReativ(limite_dos_clusters);
+            graph->agmGulosoRandReativ();
         }
         default: {
             cout << "Exit!!!" << endl;
@@ -294,7 +266,7 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<tuple<int
     }
 }
 
-int mainMenu(ofstream &output_file,Graph *graph,vector<tuple<int, int>> limite_dos_clusters) {
+int mainMenu(ofstream &output_file,Graph *graph) {
 
     int selecao = 1;
 
@@ -303,7 +275,7 @@ int mainMenu(ofstream &output_file,Graph *graph,vector<tuple<int, int>> limite_d
         selecao = menu();
 
         if (output_file.is_open())
-            selecionar(output_file,selecao, graph, limite_dos_clusters);
+            selecionar(output_file,selecao, graph);
 
         else
             cout << "Unable to open the output_file" << endl;
@@ -321,12 +293,6 @@ int main(int argc, char const *argv[]) {
 
     int fileType;
     srand(time(nullptr));
-    Graph *grap = new Graph(argc, argv);  //como auto ele nao reconhece
-    vector<tuple<int, int>> limite_dos_clusters = grap->define_leitura();
-    ofstream outputfile("files/outputFile5.dot", ios:: out);
-
-    mainMenu(outputfile, grap, limite_dos_clusters);
-
     //Verificação se todos os parâmetros do programa foram entrados
     // if (argc != 6) {
 
@@ -364,9 +330,6 @@ int main(int argc, char const *argv[]) {
         } else {
             cout << "Opção errada" << endl;
         }
-        
-
-
         auto end = chrono::steady_clock::now();
         cout << "Demorou  "
              << chrono::duration_cast<chrono::milliseconds>(end - start).count()
@@ -378,7 +341,7 @@ int main(int argc, char const *argv[]) {
     } else
         cout << "Unable to open " << argv[1];
 
-    // mainMenu(output_file, graph);
+    //mainMenu(output_file, graph);
 
     //Fechando arquivo de entrada
     input_file.close();

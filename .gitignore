@@ -6,3 +6,4 @@ execGrupoX
 *.txt
 *.dot
 run.sh
+!instancias/*.txt
