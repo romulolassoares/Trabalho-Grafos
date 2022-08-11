@@ -201,7 +201,7 @@ int menu() {
 
 }
 
-void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<pair<int, int>> limite_dos_clusters ) {
+void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<tuple<int, int>> limite_dos_clusters ) {
 
     switch (selecao) {
 
@@ -282,10 +282,10 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph,vector<pair<int,
             graph->agmGuloso(limite_dos_clusters);
         }
         case 11: {
-            graph->agmGulosoRandAdap();
+            graph->agmGulosoRandAdap(limite_dos_clusters);
         }
         case 12: {
-            graph->agmGulosoRandReativ();
+            graph->agmGulosoRandReativ(limite_dos_clusters);
         }
         default: {
             cout << "Exit!!!" << endl;
@@ -303,7 +303,7 @@ int mainMenu(ofstream &output_file,Graph *graph,vector<tuple<int, int>> limite_d
         selecao = menu();
 
         if (output_file.is_open())
-            selecionar(ofstream &output_file,selecao, graph, limite_dos_clusters);
+            selecionar(output_file,selecao, graph, limite_dos_clusters);
 
         else
             cout << "Unable to open the output_file" << endl;
@@ -323,8 +323,9 @@ int main(int argc, char const *argv[]) {
     srand(time(nullptr));
     Graph *graph = new Graph(argc, argv);  //como auto ele nao reconhece
     vector<tuple<int, int>> limite_dos_clusters = graph->define_leitura();
+    ofstream output_file("files/outputFile5.dot", ios:: out);
 
-   mainMenu(graph, limite_dos_clusters);
+    mainMenu(output_file, graph, limite_dos_clusters);
 
     //Verificação se todos os parâmetros do programa foram entrados
     // if (argc != 6) {
