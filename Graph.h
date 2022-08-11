@@ -47,6 +47,10 @@ private:
     float currentLimit;
     float maxBenefit;
 
+    string pathArquivoEntrada;
+    string pathArquivoSaida;
+    int tipoInstancia;
+
 
 public:
     //Constructor
@@ -54,6 +58,7 @@ public:
     Graph(int order, int cluster, string clusterType, vector<tuple<int, int>> clustersLimits);
     Graph(int order, int cluster, double clustersCapacity);
     Graph(int inferiorLimit, int upperLimit);
+    Graph(int argc, const char **argv);
 
     //Destructor
     ~Graph();
@@ -66,7 +71,7 @@ public:
     bool getDirected();
 
     bool getWeightedEdge();
-    vector<tuple<int, int>> Graph::define_leitura();
+    vector<tuple<int, int>> define_leitura();
     bool getWeightedNode();
 
     Node *getFirstNode();

@@ -62,6 +62,23 @@ Graph::Graph(int inferiorLimit, int upperLimit) {
     this->currentLimit = 0;
 }
 
+Graph::Graph(int argc, const char **argv){
+    this->order = 0;
+    this->number_edges = 0;
+    this->first_node = nullptr;
+    this->inferiorLimit = -1;
+    this->upperLimit = -1;
+    this->currentLimit = 0;
+    if (argc != 4) {
+        std::cerr
+            << "[ERRO] parametros do programa incorretos\nEsperado: ./execGrupoX <arquivo_entrada> <arquivo_saida> <Tipo_Instancia>\n";
+        exit(-1);
+    }
+    this->pathArquivoEntrada = static_cast<string>(argv[1]);
+    this->pathArquivoSaida = static_cast<string>(argv[2]);
+    this->tipoInstancia = std::stoi(argv[3]);
+}
+
 
 // Destructor
 Graph::~Graph() {
@@ -83,7 +100,7 @@ long inline size_arq(fstream &arq) {
 }
 
 vector<tuple<int, int>> Graph::define_leitura() {
-    fstream input_file(static_cast<string>(this->pathinput_file), std::ios::in);
+    fstream input_file(static_cast<string>(this->pathArquivoEntrada), std::ios::in);
     if (!input_file.is_open()) {
         cout <<endl;
         std::cerr << "Erro! Arquivo não pode ser aberto!";
@@ -97,23 +114,27 @@ vector<tuple<int, int>> Graph::define_leitura() {
     std::stringstream fileIn(buffer.get());  // os dados estao aqui
     vector<tuple<int, int>> limite_dos_clusters;
 
-    if (this->type_instance == 1)  // Handover
+
+    cout << this->tipoInstancia << endl;
+    if (this->tipoInstancia == 1)  // Handover
     {
-        limite_dos_clusters = this->leitura(fileIn);
-    } else if (this->type_instance == 2)  // RanReal e Sparse
+        //limite_dos_clusters = make_tuple(-100,100);
+        cout << this->tipoInstancia << endl;
+    } else if (this->tipoInstancia == 2)  // RanReal e Sparse
     {
-        limite_dos_clusters = this.
+        // limite_dos_clusters = make_tuple(-100,100);
+        cout << this->tipoInstancia << endl;
     } else {
         cout << endl;
-       cout << " ERRO! Tipo de Instancia nao presente!"<<endl;
+        cout << " ERRO! Tipo de Instancia nao presente!"<<endl;
         exit(-1);
     }
 
-    criaArestas();
-    for (int i = 0; i < this->nodesTotal; ++i) {
+    /* criaArestas();
+    for (int i = 0; i < this->order; ++i) {
         this->matrizDistancia[i][i] = 0.0f;
-    }
-    return limiteClusters;
+    } */
+    return limite_dos_clusters;
 }
 
 // Getters

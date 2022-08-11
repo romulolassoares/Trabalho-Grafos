@@ -321,11 +321,11 @@ int main(int argc, char const *argv[]) {
 
     int fileType;
     srand(time(nullptr));
-    Graph *graph = new Graph(argc, argv);  //como auto ele nao reconhece
-    vector<tuple<int, int>> limite_dos_clusters = graph->define_leitura();
-    ofstream output_file("files/outputFile5.dot", ios:: out);
+    Graph *grap = new Graph(argc, argv);  //como auto ele nao reconhece
+    vector<tuple<int, int>> limite_dos_clusters = grap->define_leitura();
+    ofstream outputfile("files/outputFile5.dot", ios:: out);
 
-    mainMenu(output_file, graph, limite_dos_clusters);
+    mainMenu(outputfile, grap, limite_dos_clusters);
 
     //Verificação se todos os parâmetros do programa foram entrados
     // if (argc != 6) {
