@@ -66,7 +66,7 @@ public:
     bool getDirected();
 
     bool getWeightedEdge();
-
+    vector<tuple<int, int>> Graph::define_leitura();
     bool getWeightedNode();
 
     Node *getFirstNode();
@@ -121,11 +121,9 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    void greed();
+    void agmGulosoRandAdap();
+    void agmGulosoRandReativ();
 
-    void greedRandom();
-
-    void greedRactiveRandom();
 
     //axiliar methods
     void printGraph();
@@ -151,6 +149,7 @@ private:
     bool arestaNaLista(Aresta_aux listEdges[], int id, int destino, int size);
 
     void cleanVisited();
+    int type_instance;
 
     int getNumberInMap(int id, std::map<Node *, int> m);
 

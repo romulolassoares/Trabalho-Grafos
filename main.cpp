@@ -201,7 +201,7 @@ int menu() {
 
 }
 
-void selecionar(int selecao, Graph *graph, ofstream &output_file) {
+void selecionar(int selecao, Graph *graph,vector<pair<int, int>> limite_dos_clusters ) {
 
     switch (selecao) {
 
@@ -279,13 +279,13 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file) {
             graph->depthFirstSearch(output_file, id);
         }
         case 10: {
-            graph->greed();
+            graph->agmGuloso(limite_dos_clusters);
         }
         case 11: {
-            graph->greedRandom();
+            graph->agmGulosoRandAdap();
         }
         case 12: {
-            graph->greedRactiveRandom();
+            graph->agmGulosoRandReativ();
         }
         default: {
             cout << "Exit!!!" << endl;
@@ -294,7 +294,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file) {
     }
 }
 
-int mainMenu(ofstream &output_file, Graph *graph) {
+int mainMenu(Graph *graph,vector<tuple<int, int>> limite_dos_clusters) {
 
     int selecao = 1;
 
@@ -303,7 +303,7 @@ int mainMenu(ofstream &output_file, Graph *graph) {
         selecao = menu();
 
         if (output_file.is_open())
-            selecionar(selecao, graph, output_file);
+            selecionar(selecao, graph, limite_dos_clusters);
 
         else
             cout << "Unable to open the output_file" << endl;
@@ -320,6 +320,11 @@ int mainMenu(ofstream &output_file, Graph *graph) {
 int main(int argc, char const *argv[]) {
 
     int fileType;
+    srand(time(nullptr));
+    Graph *graph = new Graph(argc, argv);  //como auto ele nao reconhece
+    vector<tuple<int, int>> limite_dos_clusters = graph->define_leitura();
+
+   mainMenu(graph, limite_dos_clusters);
 
     //Verificação se todos os parâmetros do programa foram entrados
     // if (argc != 6) {

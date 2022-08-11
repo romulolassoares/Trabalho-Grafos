@@ -73,6 +73,48 @@ Graph::~Graph() {
         next_node = aux_node;
     }
 }
+long inline size_arq(fstream &arq) {
+    arq.ignore(std::numeric_limits<std::streamsize>::max());
+    std::streamsize size= arq.gcount();
+    arq.clear();
+    arq.seekg(0, std::ios_base::beg);
+
+    return size;
+}
+
+vector<tuple<int, int>> Graph::define_leitura() {
+    fstream input_file(static_cast<string>(this->pathinput_file), std::ios::in);
+    if (!input_file.is_open()) {
+        cout <<endl;
+        std::cerr << "Erro! Arquivo não pode ser aberto!";
+        exit(10);
+    }
+
+    auto bufferSize = size_arq(input_file);
+    std::unique_ptr<char[]> buffer(new char[bufferSize]);
+    input_file.read(buffer.get(), bufferSize);
+    input_file.close();
+    std::stringstream fileIn(buffer.get());  // os dados estao aqui
+    vector<tuple<int, int>> limite_dos_clusters;
+
+    if (this->type_instance == 1)  // Handover
+    {
+        limite_dos_clusters = this->leitura(fileIn);
+    } else if (this->type_instance == 2)  // RanReal e Sparse
+    {
+        limite_dos_clusters = this.leituraR
+    } else {
+        cout << endl;
+       cout << " ERRO! Tipo de Instancia nao presente!"<endl;
+        exit(-1);
+    }
+
+    criaArestas();
+    for (int i = 0; i < this->nodesTotal; ++i) {
+        this->matrizDistancia[i][i] = 0.0f;
+    }
+    return limiteClusters;
+}
 
 // Getters
 int Graph::getOrder() {
@@ -1315,15 +1357,12 @@ void Graph::agmGuloso(vector<tuple<int,int>> limitClusters) {
 }
 // GULOSOS
 
-void Graph::greed(){
+
+void Graph::agmGulosoRandAdap(){
     
 }
 
-void Graph::greedRandom(){
-    
-}
-
-void Graph::greedRactiveRandom(){
+void Graph::agmGulosoRandReativ(){
     
 }
 
