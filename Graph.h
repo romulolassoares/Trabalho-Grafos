@@ -121,8 +121,8 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    void agmGulosoRandAdap();
-    void agmGulosoRandReativ();
+    void agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters);
+    void agmGulosoRandReativ(vector<tuple<int,int>> limite_dos_clusters);
 
 
     //axiliar methods

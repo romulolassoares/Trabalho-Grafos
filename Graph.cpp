@@ -1358,12 +1358,47 @@ void Graph::agmGuloso(vector<tuple<int,int>> limitClusters) {
 // GULOSOS
 
 
-void Graph::agmGulosoRandAdap(){
-    
+void Graph::agmGulosoRandAdap(vector<tuple<int,int>> limite_dos_clusters){
+    time_t start, end;
+    time(&start);
+    float melhor = 0;
+    float resultado;
+    float cof_randomizacao;
+
+    cout << "Escolha um coeficiente de randomizacao: " << endl;
+    cin >> cof_randomizacao;
+
+    vector<Graph *> solution, best_solution;
+
+    cout << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
+
+    int i=0;
+    while(i < 250) {
+        solution = guloso(limite_dos_clusters, 1, &resultado, cof_randomizacao);
+        if (resultado > melhor) {
+            melhor = resultado;
+            best_solution =solution;
+        }
+        i++;
+    }
+    time(&end);
+    if (melhor > 0) {
+        cout << "O guloso randomizado obteve alguma solucao viavel" << endl;
+    } else {
+        cout << "O guloso randomizado reativo nao obteve nenhuma solucao viavel" << endl;
+    }
+
+    //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
 }
 
-void Graph::agmGulosoRandReativ(){
-    
+void Graph::agmGulosoRandReativ(vector<tuple<int,int>> limite_dos_clusters){
+    time_t start, end;
+    time(&start);
+
+
+
+    time(&end);
+
 }
 
 
