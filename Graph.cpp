@@ -1241,7 +1241,9 @@ void Graph::agmGuloso() {
     time(&start);
 
     float result = 0;
+
     vector<Graph*> sol = guloso(0, &result, 0);
+
 
     time(&end);
     double time = double(end - start);

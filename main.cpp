@@ -73,10 +73,11 @@ Graph *leituraRR(ifstream &input_file) {
         elements.push_back(t);
     }
 
-    // cout << order << " " << cluster << " " << clusterType << endl;
+
     graph->agmGuloso();
     // float result = 0;
     // vector<Graph*> sol = graph->guloso(0, &result, 0);
+
     return graph;
 }
 
