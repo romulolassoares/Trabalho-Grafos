@@ -40,13 +40,13 @@ Graph *leituraRR(ifstream &input_file) {
     
     // Graph *graph = new Graph(order, 0, 1, 1);
 
-    cout << order << " " << cluster << " " << clusterType << endl;
+    // cout << order << " " << cluster << " " << clusterType << endl;
 
     // Get cluster limits
     for (int i = 0; i < cluster; i++) {
         input_file >> lower >> upper;
         tuple<int, int> t(lower, upper);
-        cout << get<0>(t) << ";" << get<1>(t) << " - ";
+        // cout << get<0>(t) << ";" << get<1>(t) << " - ";
         clustersLimits.push_back(t);
     }
 
