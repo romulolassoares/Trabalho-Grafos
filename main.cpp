@@ -322,8 +322,8 @@ int main(int argc, char const *argv[]) {
 
     Graph *graph;
     if (input_file.is_open()) {
+        string fileName = argv[1];
         auto start = chrono::steady_clock::now();
-
         if(fileType == 0) {
             graph = leituraRR(input_file);
         } else if(fileType == 1) {
