@@ -50,6 +50,7 @@ private:
     string pathArquivoEntrada;
     string pathArquivoSaida;
     int tipoInstancia;
+    int fileType;
 
 
 public:
@@ -126,14 +127,20 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    vector<Graph*> guloso(bool random, float *result, float alfa);
+    vector<Graph*> guloso(bool random, double *result, float alfa);
+    // vector<Graph*> gulosoRand(bool random, float *result, float alfa);
     void agmGuloso();
     void agmGulosoRandAdap();
-    void agmGulosoRandReativ();
+    void algGulosoReativo();
 
     float qualidadeSolucao(float resultadoObtido);
-
+    Node* returnValidNode(float min, float max);
     float findDistanceBetween2Nodes(int node1, int node2);
+    void verifyQuality(float result);
+    void imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio);
+    void printNodes();
+    void printNodes2();
+
 
 
     //axiliar methods

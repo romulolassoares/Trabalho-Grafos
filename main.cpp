@@ -74,7 +74,7 @@ Graph *leituraRR(ifstream &input_file) {
     }
 
 
-    graph->agmGuloso();
+    // graph->agmGuloso();
     // float result = 0;
     // vector<Graph*> sol = graph->guloso(0, &result, 0);
 
@@ -143,7 +143,6 @@ Graph *leituraHandover(ifstream &input_file) {
         }
         elements.push_back(line);
     }
-
     return graph;
 }
 
@@ -177,7 +176,7 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph) {
         }
 
         case 3: {
-            graph->agmGulosoRandReativ();
+            graph->algGulosoReativo();
             break;
         }
 
@@ -241,8 +240,8 @@ int main(int argc, char const *argv[]) {
 
     Graph *graph;
     if (input_file.is_open()) {
+        string fileName = argv[1];
         auto start = chrono::steady_clock::now();
-
         if(fileType == 0) {
             graph = leituraRR(input_file);
         } else if(fileType == 1) {
@@ -271,4 +270,8 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
+
+
+
+
 
