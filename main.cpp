@@ -144,7 +144,6 @@ Graph *leituraHandover(ifstream &input_file) {
         elements.push_back(line);
     }
 
-    graph->agmGuloso();
     return graph;
 }
 
