@@ -146,7 +146,6 @@ Graph *leituraHandover(ifstream &input_file) {
 
     graph->agmGuloso();
     return graph;
-    // return graph;
 }
 
 int menu() {
@@ -154,19 +153,10 @@ int menu() {
     int selecao;
     cout << endl;
     cout << "   ------  MENU ------" << endl;
-    cout << "[1] Fecho transitivo direto de um vertice" << endl;
-    cout << "[2] Fecho transitivo indireto de um vertice" << endl;
-    cout << "[3] Coeficiente de agrupamento local de um vertice" << endl;
-    cout << "[4] Coeficiente de agrupamento medio do grafo" << endl;
-    cout << "[5] Caminho Minimo entre dois vertices - Dijkstra " << endl;
-    cout << "[6] Caminho Minimo entre dois vertices - Floyd" << endl;
-    cout << "[7] Arvore Geradora Minima - Prim" << endl;
-    cout << "[8] Arvore Geradora Minima - Kruskal " << endl;
-    cout << "[9] Caminhamento em profundidade " << endl;
-    cout << "[10] Algoritmo construtivo guloso " << endl;
-    cout << "[11] Algoritmo construtivo guloso randomizado e adaptativo " << endl;
-    cout << "[12] Algoritmo construtivo guloso randomizado reativo " << endl;
-    cout << "[0] Sair" << endl;
+    cout << "[1] Algoritmo construtivo guloso" << endl;
+    cout << "[2] Algoritmo construtivo guloso randomizado e adaptativo" << endl;
+    cout << "[3] Algoritmo construtivo guloso randomizado reativo" << endl;
+    cout << "[4] Sair" << endl;
 
     cin >> selecao;
 
@@ -177,93 +167,24 @@ int menu() {
 void selecionar(ofstream &output_file,int selecao, Graph *graph) {
 
     switch (selecao) {
-
-        //Fecho transitivo direto de um vértice ;
         case 1: {
-            int id;
-            cout << "Digite o ID do vertice para seu fecho transitivo direto: ";
-            cin >> id;
-            graph->imprimirFechoTransitivoDireto(output_file, id);
-            break;
-        }
-            //Fecho transitivo indireto de um vértice;
-        case 2: {
-            int id;
-            cout << "Digite o ID do vertice para seu fecho transitivo indireto: ";
-            cin >> id;
-            graph->imprimirFechoTransitivoIndireto(output_file, id);
-            break;
-        }
-
-            //Coeficiente de agrupamento local de um vértice;
-        case 3: {
-            int id;
-            cout << "Digite o ID do vertice: ";
-            cin >> id;
-            cout << "Coeficiente do nó " << id << ": " << graph->localClusteringCoefficient(id) << endl;
-            break;
-        }
-            //Coeficiente de agrupamento médio do grafo;
-        case 4: {
-            cout << "Coeficiente Medio de agrupamento do grafo";
-            cout << " = " << graph->averageClusteringCoefficient() << endl;
-            break;
-        }
-            // Djkstra
-            // Caminho Mínimo entre dois vértices - Dijkstra ;
-        case 5: {
-            int id1, id2;
-            cout << "Digite o vértcie de inicio: ";
-            cin >> id1;
-            cout << "Digite o vértcie final: ";
-            cin >> id2;
-            float distancia = graph->dijkstra(id1, id2);
-            cout << "A distancia entre " << id1 << " e " << id2 << " é de: " << distancia << endl;
-            break;
-        }
-
-
-        case 6: {
-            int id_one, id_two;
-            cout << "Digite o id do vertice de origem: ";
-            cin >> id_one;
-            cout << "Digite o id do vertice de destino: ";
-            cin >> id_two;
-            graph->minimalPathByFloyd(id_one, id_two);
-            break;
-        }
-            //Árvore Geradora Mínima - Prim;
-        case 7: {
-            cout << "Árvore Geradora Mínima - Prim" << endl;
-            graph->minimalSpanningTreeByPrimAlgorithm(graph->getVerticeInduzido());
-            break;
-        }
-            //Árvore Geradora Mínima - Kruskal;
-        case 8: {
-            graph->agmByKruskal(output_file, graph->getVerticeInduzido());
-            break;
-        }
-            //Caminhamento em profundidade
-        case 9: {
-            // output_file.close();
-            int id;
-            cout << "Digite o vértice de inicio: ";
-            cin >> id;
-            graph->depthFirstSearch(output_file, id);
-        }
-        case 10: {
             graph->agmGuloso();
+            break;
         }
-        case 11: {
+
+        case 2: {
             graph->agmGulosoRandAdap();
+            break;
         }
-        case 12: {
+
+        case 3: {
             graph->agmGulosoRandReativ();
+            break;
         }
+
         default: {
             cout << "Exit!!!" << endl;
         }
-
     }
 }
 
@@ -272,7 +193,6 @@ int mainMenu(ofstream &output_file,Graph *graph) {
     int selecao = 1;
 
     while (selecao != 0) {
-        // system("clear");
         selecao = menu();
 
         if (output_file.is_open())
@@ -342,7 +262,7 @@ int main(int argc, char const *argv[]) {
     } else
         cout << "Unable to open " << argv[1];
 
-    //mainMenu(output_file, graph);
+    mainMenu(output_file, graph);
 
     //Fechando arquivo de entrada
     input_file.close();
