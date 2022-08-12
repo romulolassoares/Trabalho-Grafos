@@ -50,6 +50,7 @@ private:
     string pathArquivoEntrada;
     string pathArquivoSaida;
     int tipoInstancia;
+    int fileType;
 
 
 public:
@@ -127,6 +128,7 @@ public:
 
     //methods phase1
     vector<Graph*> guloso(bool random, float *result, float alfa);
+    // vector<Graph*> gulosoRand(bool random, float *result, float alfa);
     void agmGuloso();
     void agmGulosoRandAdap();
     void agmGulosoRandReativ();
@@ -134,6 +136,8 @@ public:
     float qualidadeSolucao(float resultadoObtido);
 
     float findDistanceBetween2Nodes(int node1, int node2);
+    void verifyQuality(float result);
+
 
 
     //axiliar methods
