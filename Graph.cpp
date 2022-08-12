@@ -1295,7 +1295,6 @@ void Graph::agmGulosoRandAdap(){
     int i=0;
     while(i < criterio_parada) {
         solution = guloso(1, &resultado, cof_randomizacao);
-        cout << "int i: " << i << " - " << resultado <<endl;
         // cout << "guloso concluido" << endl;
         if (resultado > melhor) {
             melhor = resultado;
