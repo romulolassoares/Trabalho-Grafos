@@ -1442,6 +1442,7 @@ float Graph::findDistanceBetween2Nodes(int node1, int node2) {
     return auxDistance;
 }
 
+
 void Graph::verifyQuality(float result) {
     switch (this->fileType) {
         case 1: {
@@ -1592,3 +1593,32 @@ void Graph::printNodes()
         cont++;
     }
 }
+
+void Graph::output(string output_file, vector<Graph*> solution, float quality){
+    fstream output_File(output_file, ios::in);
+
+    output_File << "Solução da Clusterização: " << endl;
+
+    for (int i = 0; i < this->cluster; i++) {
+        Graph *cluster = solution[i];
+        output_File << "=============== CLUSTER =============== " << endl;
+
+        output_File << "Beneficio do Cluster: " << cluster->maxBenefit << endl;
+
+        Node *node = cluster->getFirstNode();
+
+        output_File << "Limite: " << cluster->inferiorLimit << " <->"/*<< cluster->getLimit << "<->"*/ << cluster->upperLimit << endl;
+
+        output_File << "Nós do Cluster: " << endl;
+        while (node != nullptr) {
+            output_File << node->getId() << ";";
+            node = node->getNextNode();
+        }
+
+        output_File << endl;
+    }
+    output_File << "Qualidade da solução: " << quality << "%" << endl;
+
+    cout << "O arquivo " << output_file << " foi gerado com sucesso.";
+}
+

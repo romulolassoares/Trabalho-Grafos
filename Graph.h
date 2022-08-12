@@ -148,8 +148,9 @@ public:
 
     void printGraphDot(ofstream &file);
 
-    void
-    dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
+    void output(string output_file, vector<Graph*> solution, float quality);
+
+    void dfsRec(int id, list<Edge> &arvore, list<Edge> &retorno, int *pai, int tempo, int *tempoDescoberta, int *tempoFinal);
 
     void minimalPathByFloyd(int id_one, int id_two);
 
