@@ -63,22 +63,22 @@ Graph::Graph(int inferiorLimit, int upperLimit) {
     this->currentLimit = 0;
 }
 
-Graph::Graph(int argc, const char **argv){
-    this->order = 0;
-    this->number_edges = 0;
-    this->first_node = nullptr;
-    this->inferiorLimit = -1;
-    this->upperLimit = -1;
-    this->currentLimit = 0;
-    if (argc != 4) {
-        std::cerr
-            << "[ERRO] parametros do programa incorretos\nEsperado: ./execGrupoX <arquivo_entrada> <arquivo_saida> <Tipo_Instancia>\n";
-        exit(-1);
-    }
-    this->pathArquivoEntrada = static_cast<string>(argv[1]);
-    this->pathArquivoSaida = static_cast<string>(argv[2]);
-    this->tipoInstancia = std::stoi(argv[3]);
-}
+// Graph::Graph(int argc, const char **argv){
+//     this->order = 0;
+//     this->number_edges = 0;
+//     this->first_node = nullptr;
+//     this->inferiorLimit = -1;
+//     this->upperLimit = -1;
+//     this->currentLimit = 0;
+//     if (argc != 4) {
+//         std::cerr
+//             << "[ERRO] parametros do programa incorretos\nEsperado: ./execGrupoX <arquivo_entrada> <arquivo_saida> <Tipo_Instancia>\n";
+//         exit(-1);
+//     }
+//     this->pathArquivoEntrada = static_cast<string>(argv[1]);
+//     this->pathArquivoSaida = static_cast<string>(argv[2]);
+//     this->tipoInstancia = std::stoi(argv[3]);
+// }
 
 
 // Destructor
@@ -1074,7 +1074,7 @@ void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
 }
 
 
-vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
+vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
     vector<Graph*> solution;
     *result = 0;
     vector<bool> visitedNodes;
@@ -1088,7 +1088,6 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
     }
 
     float resultBenefit = 0;
-    float benefit = 0;
 
     for(int i = 0; i < this->cluster; i++) {
         tuple<int, int> limits = this->clustersLimits.at(i);
@@ -1097,23 +1096,28 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
     }
 
     for(int i = 0; i < this->cluster; i++) {
-        int position = i;
         Node *node;
 
         if(random) {
-            this->returnValidNode(0.0f, alfa * (this->getOrder()- 1));
+            node = this->returnValidNode(0.0f, alfa * (this->getOrder()- 1));
             // position = (int)(rand() % (int)(alfa*this->getOrder()));
+        } else {
+            node = this->getNode(i);
         }
-        node = this->getNode(position);
+        int position = node->getId();
+        // cout << position << endl;
+        
+
         if(node == nullptr || visitedNodes.at(position) == true) {
             i--;
             continue;
         }
 
-        visitedNodes.at(i) = true;
+        visitedNodes.at(position) = true;
         countVisitedNodes++;
 
-        solution.at(i)->insertNodeAndWeight(node->getId(), node->getWeight());
+        // solution.at(i)->insertNodeAndWeight(node->getId(), node->getWeight());
+        solution.at(i)->insertNodeAndWeight(position, node->getWeight());
         solution.at(i)->currentLimit += node->getWeight();
     }
 
@@ -1145,9 +1149,8 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
                 graphNode1 = clusterGraph->getNode(get<1>(twoNodes));
                 graphNode2 = this->getNode(get<0>(twoNodes));
             }
-
             if(
-                (clusterGraph->currentLimit + graphNode2->getWeight() <= clusterGraph->upperLimit) && 
+                clusterGraph->currentLimit + graphNode2->getWeight() < clusterGraph->upperLimit && 
                 visitedNodes.at(graphNode2->getId()) == false
             ) {
                 clusterGraph->insertNodeAndWeight(graphNode2->getId(), graphNode2->getWeight());
@@ -1157,7 +1160,10 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
 
                 Node *clusterNode = clusterGraph->getFirstNode();
                 while(clusterNode != nullptr) {
-                    if(visitedEdges.at(graphNode2->getId()).at(graphNode1->getId()) == false && visitedEdges.at(graphNode1->getId()).at(graphNode2->getId()) == false) {
+                    if(
+                        visitedEdges.at(graphNode2->getId()).at(graphNode1->getId()) == false && 
+                        visitedEdges.at(graphNode1->getId()).at(graphNode2->getId()) == false
+                    ) {
                         float auxDistance = findDistanceBetween2Nodes(graphNode2->getId(), clusterNode->getId());
                         clusterGraph->maxBenefit += auxDistance;
                         resultBenefit += auxDistance;
@@ -1206,7 +1212,7 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
                 }
 
                 if(
-                    (cluster->currentLimit + graphNode2->getWeight() <=cluster->upperLimit) &&
+                    cluster->currentLimit + graphNode2->getWeight() <= cluster->upperLimit &&
                     visitedNodes.at(graphNode2->getId()) == false
                 ) {
                     cluster->insertNodeAndWeight(graphNode2->getId(), graphNode2->getWeight());
@@ -1243,7 +1249,7 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
 void Graph::agmGuloso() {
     auto start = chrono::steady_clock::now();
 
-    float result = 0;
+    double result = 0;
     vector<Graph*> sol = guloso(0, &result, 0);
 
     auto end = chrono::steady_clock::now();
@@ -1273,7 +1279,7 @@ void Graph::agmGulosoRandAdap(){
     auto start = chrono::steady_clock::now();
 
     float melhor = 0;
-    float resultado = 0;
+    double resultado = 0;
     int criterio_parada=100;
     float cof_randomizacao;
 
@@ -1288,8 +1294,8 @@ void Graph::agmGulosoRandAdap(){
 
     int i=0;
     while(i < criterio_parada) {
-        // cout << "int i: " << i << endl;
         solution = guloso(1, &resultado, cof_randomizacao);
+        cout << "int i: " << i << " - " << resultado <<endl;
         // cout << "guloso concluido" << endl;
         if (resultado > melhor) {
             melhor = resultado;
@@ -1383,7 +1389,8 @@ void Graph::algGulosoReativo() {
         }
         float cof_randomizado = escolheAlfa(probabilidade, alfas);
         /**/
-        float result, semente;
+        double result;
+        float semente;
         cout << "Escolha um coeficiente de randomizacao: " << cof_randomizado << endl;
         solution = guloso(1, &result, cof_randomizado);
         cout << "Beneficio: " << result << endl
@@ -1523,3 +1530,65 @@ Node* Graph::returnValidNode(float min, float max) {
 }
 
 
+void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio)
+{
+    float totalBeneficio = 0.0;
+
+    for (int i = 0; i < this->cluster; i++)
+    {
+        Graph *cluster = solucao[i];
+
+        if (option == 2)
+        {
+            cout << "===============IMPRIME CLUSTER " << i + 1 << " ===================" << endl;
+            cout << "Beneficio " << cluster->maxBenefit << endl;
+            totalBeneficio += cluster->maxBenefit;
+        }
+
+        if (option == 1)
+        {
+            cluster->printNodes();
+        }
+        else if (option == 2)
+        {
+            cluster->printNodes2();
+        }
+
+        cout << endl;
+    }
+
+    if (option == 2)
+    {
+        cout << std::setprecision(2) << std::fixed;
+    }
+    cout << "\n\nBeneficio final: " << totalBeneficio << endl;
+}
+
+void Graph::printNodes2()
+{
+    Node *node = this->first_node;
+    int cont = 0;
+
+    cout << "Limite | " << this->inferiorLimit << " <= " << this->currentLimit << " <= " << this->upperLimit << ""
+         << endl;
+
+    while (node != nullptr)
+    {
+        cout << node->getId() << ",";
+        node = node->getNextNode();
+        cont++;
+    }
+}
+
+void Graph::printNodes()
+{
+    Node *node = this->first_node;
+    int cont = 0;
+
+    while (node != nullptr)
+    {
+        cout << node->getId() << ",";
+        node = node->getNextNode();
+        cont++;
+    }
+}

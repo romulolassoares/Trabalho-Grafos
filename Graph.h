@@ -127,7 +127,7 @@ public:
     int mapeamento(int *map, int id);
 
     //methods phase1
-    vector<Graph*> guloso(bool random, float *result, float alfa);
+    vector<Graph*> guloso(bool random, double *result, float alfa);
     // vector<Graph*> gulosoRand(bool random, float *result, float alfa);
     void agmGuloso();
     void agmGulosoRandAdap();
