@@ -131,7 +131,7 @@ public:
     // vector<Graph*> gulosoRand(bool random, float *result, float alfa);
     void agmGuloso();
     void agmGulosoRandAdap();
-    void agmGulosoRandReativ();
+    void algGulosoReativo();
 
     float qualidadeSolucao(float resultadoObtido);
     Node* returnValidNode(float min, float max);

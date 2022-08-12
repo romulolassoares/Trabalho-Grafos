@@ -1309,64 +1309,112 @@ void Graph::agmGulosoRandAdap(){
 
     //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
 }
+struct media {
+    float soma;
+    float numSolucoes;
+    float media;
+};
+void inicializaVetores(vector<float> &prob, vector<media> &medias, size_t numAlfas) {
+    media aux{0, 0, 1};
+    auto auxNumAlfas = numAlfas;
+    float auxProb = 1.0f / static_cast<float>(auxNumAlfas);
+    for (int i = 0; i < numAlfas; i++) {
+        prob.push_back(auxProb);
+        medias.push_back(aux);
+    }
+}
+void atualizaProbabilidades(vector<media> &medias, vector<float> &prob, vector<float> &solBest, vector<float> &q) {
+    float somaQ = 0;
+    float melhorSolucao = *(max_element(solBest.begin(), solBest.end()));
+    for (int i = 0; i < medias.size(); i++) {
+        q[i] = pow((melhorSolucao / medias[i].media), 2);
+        somaQ += q[i];
+    }
+    for (int i = 0; i < medias.size(); i++) {
+        prob[i] = q[i] / somaQ;
+    }
+}
+float escolheAlfa(vector<float> &prob, vector<float> &alfas) {
+    float soma = 0;
+    int r = rand() % 101;
+    for (int i = 0; i < prob.size(); i++) {
+        soma += (prob[i] * 100);
+        if (soma >= r) {
+            return alfas[i];
+        }
+    }
+    return alfas[alfas.size() - 1];
+}
+void atualizaMedias(vector<media> &medias, float solucao, vector<float> &alfas, float alfa) {
+    size_t aux = 0;
+    float auxSolucao;
+    auxSolucao = solucao;
+    for (size_t i = 0; i < alfas.size(); i++) {
+        if (alfa == alfas[i]) {
+            aux = i;
+            break;
+        }
+    }
+    medias[aux].soma = medias[aux].soma + auxSolucao;
+    medias[aux].numSolucoes++;
+    medias[aux].media = medias[aux].soma / medias[aux].numSolucoes;
+}
 
 
+void Graph::algGulosoReativo() {
+    auto start = chrono::steady_clock::now();
 
-void Graph::agmGulosoRandReativ() {
-//    Timer *timer = new Timer("Tempo de Execucao: ");
-
-//    vector<float> alfas{0.05f, 0.10f, 0.15f, 0.30f, 0.50f}, solBest, probabilidade, q;
-//    vector<media> medias;
-//    vector<Graph *> solution, melhorSol;
-//    int criterio_parada = 2500;
-//    int numBloco = 50;
-//    float solucao,float bestBenefit= 0;
+    vector<float> alfas{0.05f, 0.10f, 0.15f, 0.30f, 0.50f}, solBest, probabilidade, q;
+    vector<media> medias;
+    vector<Graph *> solution, melhorSol;
+    int criterio_parada = 2500;
+    int numBloco = 50;
+    float solucao, bestBenefit= 0;
 
 
-//    for (int i = 0; i < alfas.size(); i++) {
-//        q.push_back(0.00f);
-//        solBest.push_back(0.00f);
-//    }
-//    inicializaVetores(probabilidade, medias, alfas.size());
-//    for (int i = 1; i <= criterio_parada; i++) {
-//        if (i % numBloco == 0) {
-//            atualizaProbabilidades(medias, probabilidade, solBest, q);
-//        }
-//        float cof_randomizado = escolheAlfa(probabilidade, alfas);
-//        /**/
-//        float result, semente;
-//        cout << "Escolha um coeficiente de randomizacao: " << cof_randomizado << endl;
-//        sol = guloso(limitClusters, &result, cof_randomizado);
-//        cout << "Beneficio: " << result << endl
-//             << endl;
-//        if (result > bestBenefit) {
-//            bestBenefit = result;
-//            melhorSol = sol;
-//            solBest[cof_randomizado] = bestBenefit;
-//        }
-//        for (auto &i : sol) {
-//            delete i;
-//        }
-
-//        atualizaMedias(medias, bestBenefit, alfas, cof_randomizado);
-//    }
-//    float auxSolBest = 0;
-//    for (int i = 0; i < solBest.size(); i++) {
-//        if (solBest[i] > auxSolBest) {
-//            auxSolBest = solBest[i];
-//        }
-//    }
-//    cout << std::setprecision(2) << std::fixed;
-//    delete timer;
-//    cout << "Beneficio da Melhor Solucao: " << auxSolBest << endl;
-//    // cout << "Semente da melhor solucao: " << alfas[auxSolBest] << endl;
-//    // cout << "Qualidade Solucao: " << qualidadeSolucao(auxSolBest) << "%" << endl;
-//    if (auxSolBest > 0) {
-//        cout << "Conseguiu alguma solucao viavel" << endl;
-//    } else {
-//        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
-//    }
-//    output("AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, qualidadeSolucao(auxSolBest));
+    for (int i = 0; i < alfas.size(); i++) {
+        q.push_back(0.00f);
+        solBest.push_back(0.00f);
+    }
+    inicializaVetores(probabilidade, medias, alfas.size());
+    for (int i = 1; i <= criterio_parada; i++) {
+        if (i % numBloco == 0) {
+            atualizaProbabilidades(medias, probabilidade, solBest, q);
+        }
+        float cof_randomizado = escolheAlfa(probabilidade, alfas);
+        /**/
+        float result, semente;
+        cout << "Escolha um coeficiente de randomizacao: " << cof_randomizado << endl;
+        solution = guloso(1, &result, cof_randomizado);
+        cout << "Beneficio: " << result << endl
+             << endl;
+        if (result > bestBenefit) {
+            bestBenefit = result;
+            melhorSol = solution;
+            solBest[cof_randomizado] = bestBenefit;
+        }
+        for (auto &i : solution) {
+            delete i;
+        }
+        atualizaMedias(medias, bestBenefit, alfas, cof_randomizado);
+    }
+    float auxSolBest = 0;
+    for (int i = 0; i < solBest.size(); i++) {
+        if (solBest[i] > auxSolBest) {
+            auxSolBest = solBest[i];
+        }
+    }
+    cout << std::setprecision(2) << std::fixed;
+    auto end = chrono::steady_clock::now();
+    cout << "Beneficio da Melhor Solucao: " << auxSolBest << endl;
+    // cout << "Semente da melhor solucao: " << alfas[auxSolBest] << endl;
+    // cout << "Qualidade Solucao: " << qualidadeSolucao(auxSolBest) << "%" << endl;
+    if (auxSolBest > 0) {
+        cout << "Conseguiu alguma solucao viavel" << endl;
+    } else {
+        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
+    }
+    //output("AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, qualidadeSolucao(auxSolBest));
 }
 
 float Graph::findDistanceBetween2Nodes(int node1, int node2) {
