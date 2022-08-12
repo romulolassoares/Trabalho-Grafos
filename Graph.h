@@ -134,9 +134,12 @@ public:
     void agmGulosoRandReativ();
 
     float qualidadeSolucao(float resultadoObtido);
-
+    Node* returnValidNode(float min, float max);
     float findDistanceBetween2Nodes(int node1, int node2);
     void verifyQuality(float result);
+    void imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio);
+    void printNodes();
+    void printNodes2();
 
 
 

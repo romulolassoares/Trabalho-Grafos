@@ -74,7 +74,7 @@ Graph *leituraRR(ifstream &input_file) {
     }
 
 
-    graph->agmGuloso();
+    // graph->agmGuloso();
     // float result = 0;
     // vector<Graph*> sol = graph->guloso(0, &result, 0);
 
@@ -144,7 +144,7 @@ Graph *leituraHandover(ifstream &input_file) {
         elements.push_back(line);
     }
 
-    graph->agmGuloso();
+    // graph->agmGuloso();
     return graph;
 }
 
@@ -271,5 +271,70 @@ int main(int argc, char const *argv[]) {
     output_file.close();
 
     return 0;
+}
+
+
+
+void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio)
+{
+    float totalBeneficio = 0.0;
+
+    for (int i = 0; i < this->cluster; i++)
+    {
+        Graph *cluster = solucao[i];
+
+        if (option == 2)
+        {
+            cout << "===============IMPRIME CLUSTER " << i + 1 << " ===================" << endl;
+            cout << "Beneficio " << cluster->maxBenefit << endl;
+            totalBeneficio += cluster->maxBenefit;
+        }
+
+        if (option == 1)
+        {
+            cluster->printNodes();
+        }
+        else if (option == 2)
+        {
+            cluster->printNodes2();
+        }
+
+        cout << endl;
+    }
+
+    if (option == 2)
+    {
+        cout << std::setprecision(2) << std::fixed;
+    }
+    cout << "\n\nBeneficio final: " << totalBeneficio << endl;
+}
+
+void Graph::printNodes2()
+{
+    Node *node = this->first_node;
+    int cont = 0;
+
+    cout << "Limite | " << this->inferiorLimit << " <= " << this->currentLimit << " <= " << this->upperLimit << ""
+         << endl;
+
+    while (node != nullptr)
+    {
+        cout << node->getId() << ",";
+        node = node->getNextNode();
+        cont++;
+    }
+}
+
+void Graph::printNodes()
+{
+    Node *node = this->first_node;
+    int cont = 0;
+
+    while (node != nullptr)
+    {
+        cout << node->getId() << ",";
+        node = node->getNextNode();
+        cont++;
+    }
 }
 

@@ -1073,6 +1073,7 @@ void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
     cout << "Somatorio final dos pesos das arestas: " << sum_weights << endl;
 }
 
+
 vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
     vector<Graph*> solution;
     *result = 0;
@@ -1098,8 +1099,10 @@ vector<Graph*> Graph::guloso(bool random, float *result, float alfa) {
     for(int i = 0; i < this->cluster; i++) {
         int position = i;
         Node *node;
+
         if(random) {
-            position = (int)(rand() % (int)(alfa*this->getOrder()));
+            this->returnValidNode(0.0f, alfa * (this->getOrder()- 1));
+            // position = (int)(rand() % (int)(alfa*this->getOrder()));
         }
         node = this->getNode(position);
         if(node == nullptr || visitedNodes.at(position) == true) {
@@ -1258,6 +1261,8 @@ void Graph::agmGuloso() {
         cout << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
 
+    imprimeCluster(sol, 2, result);
+
     // imprimeCluster(sol, 2, result);
     // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
 }
@@ -1266,13 +1271,16 @@ void Graph::agmGuloso() {
 
 void Graph::agmGulosoRandAdap(){
     auto start = chrono::steady_clock::now();
+
     float melhor = 0;
-    float resultado;
-    int criterio_parada=250;
+    float resultado = 0;
+    int criterio_parada=100;
     float cof_randomizacao;
 
-    cout << "Escolha um coeficiente de randomizacao: " << endl;
-    cin >> cof_randomizacao;
+    // cout << "Escolha um coeficiente de randomizacao: " << endl;
+    // cin >> cof_randomizacao;
+    for (int i = 0; i < rand(); i++)
+        cof_randomizacao = 0 + (float) (rand()) / ((float) (RAND_MAX / (1 - 0)));
 
     vector<Graph *> solution, best_solution;
 
@@ -1280,7 +1288,9 @@ void Graph::agmGulosoRandAdap(){
 
     int i=0;
     while(i < criterio_parada) {
+        // cout << "int i: " << i << endl;
         solution = guloso(1, &resultado, cof_randomizacao);
+        // cout << "guloso concluido" << endl;
         if (resultado > melhor) {
             melhor = resultado;
             best_solution =solution;
@@ -1289,6 +1299,7 @@ void Graph::agmGulosoRandAdap(){
     }
     cout << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
+
     cout << "Beneficio da melhor solucao: " << melhor <<endl;
     if (melhor > 0) {
         cout << "O guloso randomizado obteve alguma solucao viavel" << endl;
@@ -1301,17 +1312,17 @@ void Graph::agmGulosoRandAdap(){
 
 
 
-//void Graph::algGulosoReativo(vector<tuple<int, int>> limitClusters) {
+void Graph::agmGulosoRandReativ() {
 //    Timer *timer = new Timer("Tempo de Execucao: ");
-//
+
 //    vector<float> alfas{0.05f, 0.10f, 0.15f, 0.30f, 0.50f}, solBest, probabilidade, q;
 //    vector<media> medias;
 //    vector<Graph *> solution, melhorSol;
 //    int criterio_parada = 2500;
 //    int numBloco = 50;
 //    float solucao,float bestBenefit= 0;
-//
-//
+
+
 //    for (int i = 0; i < alfas.size(); i++) {
 //        q.push_back(0.00f);
 //        solBest.push_back(0.00f);
@@ -1336,7 +1347,7 @@ void Graph::agmGulosoRandAdap(){
 //        for (auto &i : sol) {
 //            delete i;
 //        }
-//
+
 //        atualizaMedias(medias, bestBenefit, alfas, cof_randomizado);
 //    }
 //    float auxSolBest = 0;
@@ -1356,7 +1367,7 @@ void Graph::agmGulosoRandAdap(){
 //        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
 //    }
 //    output("AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, qualidadeSolucao(auxSolBest));
-//}
+}
 
 float Graph::findDistanceBetween2Nodes(int node1, int node2) {
     // START - Get Distance between two nodes
@@ -1434,3 +1445,33 @@ void Graph::verifyQuality(float result) {
 
     }
 }
+
+
+
+Node* Graph::returnValidNode(float min, float max) {
+    float random = ((float)rand()) / (float)RAND_MAX;
+    float diff = max - min;
+    float r = random * diff;
+    int idRandom = min + r;
+    // find the node with at idRandom
+    list<int> candidates;
+    for (int i = 0; i < this->getOrder(); i++) {
+        candidates.push_back(i);
+    }
+
+    int i = 0;
+    for (auto it = candidates.begin(); it != candidates.end(); ++it)
+    {
+        if (i == idRandom)
+        {
+            auto node = this->getNode(*it);
+            candidates.erase(it);
+            return node;
+        }
+        i++;
+    }
+
+    return nullptr;
+}
+
+
