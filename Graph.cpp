@@ -1080,7 +1080,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
     vector<bool> visitedNodes;
     int countVisitedNodes = 0;
     vector<vector<bool>> visitedEdges;
-
+    // Preenche os veteros de nós visitados e e arestas visitadas
     visitedEdges.resize(this->getOrder());
     for(int i = 0; i < this->getOrder(); i++) {
         visitedEdges.at(i).resize(this->getOrder());
@@ -1089,12 +1089,14 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 
     float resultBenefit = 0;
 
+    // Inicializa os clusters
     for(int i = 0; i < this->cluster; i++) {
         tuple<int, int> limits = this->clustersLimits.at(i);
         Graph *cluster = new Graph(get<0>(limits), get<1>(limits));
         solution.push_back(cluster);
     }
 
+    // Sorteia o nó inicial de cada cluster
     for(int i = 0; i < this->cluster; i++) {
         Node *node;
 
@@ -1104,9 +1106,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
         } else {
             node = this->getNode(i);
         }
-        int position = node->getId();
-        // cout << position << endl;
-        
+        int position = node->getId();       
 
         if(node == nullptr || visitedNodes.at(position) == true) {
             i--;
@@ -1123,6 +1123,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 
     priority_queue<tuple<float, int, int>> candidates;
     
+    // Valida o limite inferior
     for(int i = 0; i < this->cluster; i++) {
         Graph *clusterGraph = solution.at(i);
         int auxId = clusterGraph->getFirstNode()->getId();
@@ -1150,7 +1151,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                 graphNode2 = this->getNode(get<0>(twoNodes));
             }
             if(
-                clusterGraph->currentLimit + graphNode2->getWeight() < clusterGraph->upperLimit && 
+                clusterGraph->currentLimit + graphNode2->getWeight() <= clusterGraph->upperLimit && 
                 visitedNodes.at(graphNode2->getId()) == false
             ) {
                 clusterGraph->insertNodeAndWeight(graphNode2->getId(), graphNode2->getWeight());
@@ -1180,6 +1181,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
         }
     }
 
+    // Atualiza nós que não estão no cluster
     for(int i = 0; i < this->getOrder(); i++) {
         for(int j = 0; j < this->getOrder(); j++) {
             if(visitedNodes.at(i) == false || visitedNodes.at(j) == false) {
@@ -1190,6 +1192,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
         }
     }
 
+    // Valida o limite superior
     while(countVisitedNodes < this->getOrder() && !candidates.empty()) {
         tuple<float, int, int> candidate = candidates.top();
         float distance = get<0>(candidate);
@@ -1229,12 +1232,13 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                             visitedEdges.at(clusterNode->getId()).at(graphNode2->getId()) == false
                         ) {
                             float auxDistance = findDistanceBetween2Nodes(graphNode2->getId(), clusterNode->getId());
+                            cout << graphNode2->getId() << " - " << clusterNode->getId() << endl;
                             cluster->maxBenefit += auxDistance;
                             resultBenefit += auxDistance;
                         }
                         clusterNode = clusterNode->getNextNode();
                     }
-                    cluster->currentLimit += graphNode2->getId();
+                    cluster->currentLimit += graphNode2->getWeight();
                     visitedNodes.at(graphNode2->getId()) = true;
                     countVisitedNodes++;
                 }
@@ -1438,6 +1442,7 @@ float Graph::findDistanceBetween2Nodes(int node1, int node2) {
         }
     }
     // END - Get Distance between two nodes
+    cout << "Distância (findDistanceBetween2Nodes): " << auxDistance << endl;
     return auxDistance;
 }
 
