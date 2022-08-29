@@ -1151,7 +1151,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                 graphNode2 = this->getNode(get<0>(twoNodes));
             }
             if(
-                clusterGraph->currentLimit + graphNode2->getWeight() < clusterGraph->upperLimit && 
+                clusterGraph->currentLimit + graphNode2->getWeight() <= clusterGraph->upperLimit && 
                 visitedNodes.at(graphNode2->getId()) == false
             ) {
                 clusterGraph->insertNodeAndWeight(graphNode2->getId(), graphNode2->getWeight());
@@ -1232,6 +1232,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                             visitedEdges.at(clusterNode->getId()).at(graphNode2->getId()) == false
                         ) {
                             float auxDistance = findDistanceBetween2Nodes(graphNode2->getId(), clusterNode->getId());
+                            cout << graphNode2->getId() << " - " << clusterNode->getId() << endl;
                             cluster->maxBenefit += auxDistance;
                             resultBenefit += auxDistance;
                         }
@@ -1441,6 +1442,7 @@ float Graph::findDistanceBetween2Nodes(int node1, int node2) {
         }
     }
     // END - Get Distance between two nodes
+    cout << "Distância (findDistanceBetween2Nodes): " << auxDistance << endl;
     return auxDistance;
 }
 
