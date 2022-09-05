@@ -188,10 +188,9 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph) {
 
 int mainMenu(ofstream &output_file,Graph *graph) {
 
-    int selecao = 1;
+    int selecao = menu();
 
-    while (selecao != 0) {
-        selecao = menu();
+    while (selecao != 4) {
 
         if (output_file.is_open())
             selecionar(output_file,selecao, graph);
@@ -201,7 +200,7 @@ int mainMenu(ofstream &output_file,Graph *graph) {
 
 
         output_file << endl;
-
+        selecao = menu();
     }
 
     return 0;
