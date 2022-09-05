@@ -925,155 +925,6 @@ void Graph::printGraphDot(ofstream &file) {
     }
 }
 
-int Graph::getNumberInMap(int id, map<Node *, int> m) {
-    map<Node *, int>::iterator it;
-
-    for (it = m.begin(); it != m.end(); it++) {
-        if (it->first->getId() == id) {
-            return it->second;
-        }
-    }
-    return -1;
-
-}
-
-void Graph::minimalPathByFloyd(int id_one, int id_two) {
-
-    float infinity = std::numeric_limits<float>::max();
-
-    Matriz *a = nullptr;
-    if (this->getDirected()) {
-        a = new Matriz(this->getOrder(), this->getOrder(), false);
-    } else {
-        a = new Matriz(this->getOrder(), this->getOrder(), true);
-    }
-
-    map<Node *, int> m;
-
-    for (int i = 0; i < this->getOrder(); i++) {
-        for (int j = 0; j < this->getOrder(); j++) {
-            if (i == j)
-                a->set(i, j, 0);
-            else
-                a->set(i, j, infinity);
-        }
-    }
-
-    int number_node = 0;
-    for (Node *p = this->getFirstNode(); p != nullptr; p = p->getNextNode()) {
-        m[p] = number_node;
-        number_node++;
-    }
-
-    for (Node *p = this->getFirstNode(); p != nullptr; p = p->getNextNode()) {
-        for (Edge *t = p->getFirstEdge(); t != nullptr; t = t->getNextEdge()) {
-            a->set(m[p], getNumberInMap(t->getTargetId(), m), t->getWeight());
-        }
-    }
-
-    for (int k = 0; k < this->getOrder(); k++) {
-        for (int i = 0; i < this->getOrder(); i++) {
-            for (int j = 0; j < this->getOrder(); j++) {
-                if (a->get(i, k) + a->get(k, j) < a->get(i, j)) {
-                    a->set(i, j, a->get(i, k) + a->get(k, j));
-                }
-            }
-        }
-    }
-
-    cout << "O caminho mínimo entre os vértices " << id_one << " e " << id_two << ": "
-         << a->get(getNumberInMap(id_one, m), getNumberInMap(id_two, m)) << endl;
-
-    delete a;
-}
-
-bool auxPrimContainsNode(int k, list<Node *> v) {
-    list<Node *>::iterator it_v;
-    for (it_v = v.begin(); it_v != v.end(); it_v++) {
-        if ((*it_v)->getId() == k) {
-            return true;
-        }
-    }
-    return false;
-}
-
-EdgeLinkedNode *Graph::getLighterEdge(list<Node *> t, list<Node *> v) {
-    EdgeLinkedNode *r = new EdgeLinkedNode;
-    float infinity = std::numeric_limits<float>::max();
-    r->k = new Node(-1);
-    r->e = new Edge(-1);
-    r->e->setWeight(infinity);
-
-    list<Node *>::iterator j;
-
-    for (j = t.begin(); j != t.end(); j++) {
-        for (Edge *k = (*j)->getFirstEdge(); k != nullptr; k = k->getNextEdge()) {
-            if (auxPrimContainsNode(k->getTargetId(), v)) {
-                if (k->getWeight() < r->e->getWeight()) {
-                    r->e = k;
-                    r->k = this->getNode(k->getTargetId());
-                    r->id_origem = (*j)->getId();
-                }
-            }
-        }
-    }
-
-    return r;
-
-}
-
-void Graph::minimalSpanningTreeByPrimAlgorithm(Graph *g) {
-    if (g->getNumberEdges() == 0) {
-        cout << "Este subgrafo nao contem arestas!" << endl;
-        return;
-    }
-
-    float sum_weights = 0;
-
-    list<Node *> t;
-    t.push_back(g->getFirstNode());
-
-    list<Node *> v;
-    for (Node *p = g->getFirstNode()->getNextNode(); p != nullptr; p = p->getNextNode()) {
-        v.push_back(p);
-    }
-
-    list<Edge *> t_min;
-
-    int tam = t.size() + v.size();
-
-    while (t.size() != tam) {
-        EdgeLinkedNode *r = getLighterEdge(t, v);
-        if (r->e->getWeight() == std::numeric_limits<float>::max() and r->k->getId() == -1) {
-            cout << "Nao e possivel gerar uma Árvore Geradora Mínima." << endl << "Grafo nao conexo!" << endl;
-            return;
-        }
-        r->e->setOrigem(r->id_origem);
-        t.push_back(r->k);
-
-        list<Node *> aux;
-        list<Node *>::iterator n;
-        for (n = v.begin(); n != v.end(); n++) {
-            if ((*n)->getId() != r->k->getId())
-                aux.push_back(*n);
-        }
-
-        t_min.push_back(r->e);
-        v = aux;
-        sum_weights += r->e->getWeight();
-
-    }
-
-    list<Edge *>::iterator edge;
-
-    for (edge = t_min.begin(); edge != t_min.end(); ++edge) {
-        cout << "(" << (*edge)->getOrigem() << ", " << (*edge)->getTargetId() << ") => " << (*edge)->getWeight()
-             << endl;
-    }
-    cout << "Somatorio final dos pesos das arestas: " << sum_weights << endl;
-}
-
-
 vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
     vector<Graph*> solution;
     *result = 0;
@@ -1156,6 +1007,8 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
             ) {
                 clusterGraph->insertNodeAndWeight(graphNode2->getId(), graphNode2->getWeight());
                 clusterGraph->maxBenefit += distance;
+                resultBenefit += distance;
+
                 visitedEdges.at(graphNode2->getId()).at(graphNode1->getId()) = true;
                 visitedEdges.at(graphNode1->getId()).at(graphNode2->getId()) = true;
 
@@ -1168,6 +1021,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                         float auxDistance = findDistanceBetween2Nodes(graphNode2->getId(), clusterNode->getId());
                         clusterGraph->maxBenefit += auxDistance;
                         resultBenefit += auxDistance;
+                        cout << "result = " << resultBenefit << endl;
                     }
                     clusterNode = clusterNode->getNextNode();
                 }
@@ -1232,9 +1086,10 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
                             visitedEdges.at(clusterNode->getId()).at(graphNode2->getId()) == false
                         ) {
                             float auxDistance = findDistanceBetween2Nodes(graphNode2->getId(), clusterNode->getId());
-                            cout << graphNode2->getId() << " - " << clusterNode->getId() << endl;
+                            // cout << graphNode2->getId() << " - " << clusterNode->getId() << endl;
                             cluster->maxBenefit += auxDistance;
                             resultBenefit += auxDistance;
+                            cout << "result = " << resultBenefit << endl;
                         }
                         clusterNode = clusterNode->getNextNode();
                     }
@@ -1442,7 +1297,7 @@ float Graph::findDistanceBetween2Nodes(int node1, int node2) {
         }
     }
     // END - Get Distance between two nodes
-    cout << "Distância (findDistanceBetween2Nodes): " << auxDistance << endl;
+    // cout << "Distância (findDistanceBetween2Nodes): " << auxDistance << endl;
     return auxDistance;
 }
 
