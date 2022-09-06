@@ -558,6 +558,7 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 
 // GULOSOS
 void Graph::agmGuloso() {
+    cout << std::setprecision(2) << std::fixed;
     auto start = chrono::steady_clock::now();
 
     double result = 0;
@@ -576,7 +577,7 @@ void Graph::agmGuloso() {
         cout << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
 
-    imprimeCluster(sol, 2, result);
+    // imprimeCluster(sol, 2, result);
 
     // imprimeCluster(sol, 2, result);
     // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
@@ -610,6 +611,9 @@ void Graph::agmGulosoRandAdap(){
 
     cout << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
+    cout << "Demorou  "
+            << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+            << " ms para executar." << endl;
 
     cout << "Beneficio da melhor solucao: " << melhor <<endl;
     if (melhor > 0) {
@@ -723,6 +727,10 @@ void Graph::algGulosoReativo() {
     }
     cout << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
+    cout << "Demorou  "
+            << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+            << " ms para executar." << endl;
+            
     cout << "Beneficio da Melhor Solucao: " << auxSolBest << endl;
     // cout << "Semente da melhor solucao: " << alfas[auxSolBest] << endl;
     // cout << "Qualidade Solucao: " << qualidadeSolucao(auxSolBest) << "%" << endl;
@@ -754,66 +762,6 @@ float Graph::findDistanceBetween2Nodes(int node1, int node2) {
     return auxDistance;
 }
 
-
-void Graph::verifyQuality(float result) {
-    switch (this->fileType) {
-        case 1: {
-            // RanReal240_01.txt
-            float literatureResult = 225003.70;
-            break;
-        }
-        case 2: {
-            // RanReal240_04.txt
-            float literatureResult = 225683.17;
-            break;
-        }
-        case 3: {
-            // RanReal240_07.txt
-            float literatureResult = 209305.70;
-            break;
-        }
-        case 4: {
-            // RanReal480_01.txt
-            float literatureResult = 556126.86;
-            break;
-        }
-        case 5: {
-            // RanReal480_04.txt
-            float literatureResult = 522790.22;
-            break;
-        }
-        case 6: {
-            // RanReal960_01.30.txt
-            float literatureResult = 1340369.47;
-            break;
-        }
-        case 7: {
-            // Sparse82_02.txt
-            float literatureResult = 1306.64;
-            break;
-        }
-        case 8: {
-            // 20_5_270001
-            float literatureResult = 0;
-            break;
-        }
-        case 9: {
-            // 20_10_270001
-            float literatureResult = 2148.00;
-            break;
-        }
-        case 10: {
-            // 30_5_270003
-            float literatureResult = 920.00;
-            break;
-        }
-        default: {
-            cout << "Exit!!!" << endl;
-        }
-
-    }
-}
-
 Node* Graph::returnValidNode(float min, float max) {
     float random = ((float)rand()) / (float)RAND_MAX;
     float diff = max - min;
@@ -839,7 +787,6 @@ Node* Graph::returnValidNode(float min, float max) {
 
     return nullptr;
 }
-
 
 void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio)
 {
@@ -963,3 +910,4 @@ double Graph::calculatePenalization(int id1, int id2, Graph *cluster) {
 
     return value;
 }
+

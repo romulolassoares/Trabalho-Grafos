@@ -47,7 +47,6 @@ class Graph {
         //Constructor
         Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
         Graph(int order, int cluster, string clusterType, vector<tuple<int, int>> clustersLimits);
-        // Graph(int order, int cluster, double clustersCapacity);
         Graph(int inferiorLimit, int upperLimit);
         //Destructor
         ~Graph();
@@ -79,11 +78,9 @@ class Graph {
         void printGraph();
         void printGraphDot(ofstream &file);
         void output(string output_file, vector<Graph*> solution, float quality);
-
-        double calculatePenalization(int id1, int id2, Graph *cluster);
-
     private:
         vector<Graph*> guloso(bool random, double *result, float alfa);
+        double calculatePenalization(int id1, int id2, Graph *cluster);
 
         float qualidadeSolucao(float resultadoObtido);
         Node* returnValidNode(float min, float max);
