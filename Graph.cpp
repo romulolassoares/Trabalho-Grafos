@@ -43,15 +43,6 @@ Graph::Graph(int order, int cluster, string clusterType, vector<tuple<int, int>>
     this->weighted_node = 1;
 }
 
-// Graph::Graph(int order, int cluster, double clustersCapacity) {
-//     // this->order = order;
-//     this->cluster = cluster;
-//     this->clustersCapacity = clustersCapacity;
-//     this->first_node = this->last_node = nullptr;
-//     this->weighted_edge = 1;
-//     this->weighted_node = 1;
-// }
-
 Graph::Graph(int inferiorLimit, int upperLimit) {
     this->first_node = this->last_node = nullptr;
     this->weighted_edge = 1;
@@ -70,15 +61,6 @@ Graph::~Graph() {
         delete next_node;
         next_node = aux_node;
     }
-}
-
-long inline size_arq(fstream &arq) {
-    arq.ignore(std::numeric_limits<std::streamsize>::max());
-    std::streamsize size= arq.gcount();
-    arq.clear();
-    arq.seekg(0, std::ios_base::beg);
-
-    return size;
 }
 
 // Getters
@@ -557,29 +539,24 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 }
 
 // GULOSOS
-void Graph::agmGuloso() {
+void Graph::agmGuloso(ofstream &file, string filename) {
     auto start = chrono::steady_clock::now();
 
     double result = 0;
     vector<Graph*> sol = guloso(0, &result, 0);
 
     auto end = chrono::steady_clock::now();
-    cout << "Demorou  "
-            << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-            << " ms para executar." << endl;
-    // cout << "Qualidade Solucao: " << qualidadeSolucao(result) << "%" << endl;
+    double time = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    cout << "Demorou  " << time  << " ms para executar." << endl;
 
-    cout << "Qualidade Obtida: " << result << endl;
     if (result > 0) {
         cout << "Conseguiu alguma solucao viavel" << endl;
     } else {
         cout << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
 
-    imprimeCluster(sol, 2, result);
-
-    // imprimeCluster(sol, 2, result);
-    // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
+    // imprimeCluster(sol, 1, result);
+    output(file, sol, result, time, filename);
 }
 
 void Graph::agmGulosoRandAdap(){
@@ -617,9 +594,10 @@ void Graph::agmGulosoRandAdap(){
     } else {
         cout << "O guloso randomizado reativo nao obteve nenhuma solucao viavel" << endl;
     }
-
-    //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
+    imprimeCluster(best_solution, 2, melhor);
+    // output("results/AlgoritmoGulosoRandomizadoAdaptativo.txt", best_solution, melhor);
 }
+
 struct media {
     float soma;
     float numSolucoes;
@@ -673,66 +651,6 @@ void atualizaMedias(vector<media> &medias, float solucao, vector<float> &alfas, 
     medias[aux].soma = medias[aux].soma + auxSolucao;
     medias[aux].numSolucoes++;
     medias[aux].media = medias[aux].soma / medias[aux].numSolucoes;
-}
-
-
-void Graph::algGulosoReativo() {
-    auto start = chrono::steady_clock::now();
-
-    vector<float> alfas{0.05f, 0.10f, 0.15f, 0.30f, 0.50f}, solBest, probabilidade, q;
-    vector<media> medias;
-    vector<Graph *> solution, melhorSol;
-    int criterio_parada = 10;
-    int numBloco = 50;
-    float solucao, bestBenefit= 0;
-    double result = 0;
-
-
-    for (int i = 0; i < alfas.size(); i++) {
-        q.push_back(0.00f);
-        solBest.push_back(0.00f);
-    }
-    inicializaVetores(probabilidade, medias, alfas.size());
-    for (int i = 1; i <= criterio_parada; i++) {
-        if (i % numBloco == 0) {
-            atualizaProbabilidades(medias, probabilidade, solBest, q);
-        }
-        float cof_randomizado = escolheAlfa(probabilidade, alfas);
-        /**/
-        result = 0;
-        float semente;
-        cout << "Escolha um coeficiente de randomizacao: " << cof_randomizado << endl;
-        solution = guloso(1, &result, cof_randomizado);
-        // cout << "Beneficio: " << result << endl
-            //  << endl;
-        if (result > bestBenefit) {
-            bestBenefit = result;
-            melhorSol = solution;
-            solBest[cof_randomizado] = bestBenefit;
-        }
-        for (auto &i : solution) {
-            delete i;
-        }
-        atualizaMedias(medias, bestBenefit, alfas, cof_randomizado);
-    }
-    float auxSolBest = 0;
-    for (int i = 0; i < solBest.size(); i++) {
-        if (solBest[i] > auxSolBest) {
-            auxSolBest = solBest[i];
-        }
-    }
-    cout << std::setprecision(2) << std::fixed;
-    auto end = chrono::steady_clock::now();
-    cout << "Beneficio da Melhor Solucao: " << auxSolBest << endl;
-    // cout << "Semente da melhor solucao: " << alfas[auxSolBest] << endl;
-    // cout << "Qualidade Solucao: " << qualidadeSolucao(auxSolBest) << "%" << endl;
-    if (auxSolBest > 0) {
-        cout << "Conseguiu alguma solucao viavel" << endl;
-    } else {
-        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
-    }
-    result = 0;
-    //output("AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, qualidadeSolucao(auxSolBest));
 }
 
 float Graph::findDistanceBetween2Nodes(int node1, int node2) {
@@ -840,11 +758,71 @@ Node* Graph::returnValidNode(float min, float max) {
     return nullptr;
 }
 
+void Graph::algGulosoReativo() {
+    auto start = chrono::steady_clock::now();
+
+    vector<float> alfas{0.05f, 0.10f, 0.15f, 0.30f, 0.50f}, solBest, probabilidade, q;
+    vector<media> medias;
+    vector<Graph *> solution, melhorSol;
+    int criterio_parada = 10;
+    int numBloco = 50;
+    float solucao, bestBenefit= 0;
+    double result = 0;
+
+
+    for (int i = 0; i < alfas.size(); i++) {
+        q.push_back(0.00f);
+        solBest.push_back(0.00f);
+    }
+    inicializaVetores(probabilidade, medias, alfas.size());
+    for (int i = 1; i <= criterio_parada; i++) {
+        if (i % numBloco == 0) {
+            atualizaProbabilidades(medias, probabilidade, solBest, q);
+        }
+        float cof_randomizado = escolheAlfa(probabilidade, alfas);
+        /**/
+        result = 0;
+        float semente;
+        cout << "Escolha um coeficiente de randomizacao: " << cof_randomizado << endl;
+        solution = guloso(1, &result, cof_randomizado);
+        // cout << "Beneficio: " << result << endl
+            //  << endl;
+        if (result > bestBenefit) {
+            bestBenefit = result;
+            melhorSol = solution;
+            solBest[cof_randomizado] = bestBenefit;
+        }
+        for (auto &i : solution) {
+            delete i;
+        }
+        atualizaMedias(medias, bestBenefit, alfas, cof_randomizado);
+    }
+    float auxSolBest = 0;
+    for (int i = 0; i < solBest.size(); i++) {
+        if (solBest[i] > auxSolBest) {
+            auxSolBest = solBest[i];
+        }
+    }
+    cout << std::setprecision(2) << std::fixed;
+    auto end = chrono::steady_clock::now();
+    cout << "Beneficio da Melhor Solucao: " << auxSolBest << endl;
+    // cout << "Semente da melhor solucao: " << alfas[auxSolBest] << endl;
+    // cout << "Qualidade Solucao: " << qualidadeSolucao(auxSolBest) << "%" << endl;
+    if (auxSolBest > 0) {
+        cout << "Conseguiu alguma solucao viavel" << endl;
+    } else {
+        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
+    }
+    result = 0;
+    imprimeCluster(melhorSol, 2, auxSolBest);
+    // output("results/AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, auxSolBest);
+}
 
 void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBeneficio)
 {
     float totalBeneficio = 0.0;
-
+    cout << std::setprecision(3) << std::fixed;
+    if (option == 1) cout << "Cluster id" << ";" << "Cluster Benefit" << ";" << "Nodes" << endl;
     for (int i = 0; i < this->cluster; i++)
     {
         Graph *cluster = solucao[i];
@@ -853,6 +831,9 @@ void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBene
         {
             cout << "===============IMPRIME CLUSTER " << i + 1 << " ===================" << endl;
             cout << "Beneficio " << cluster->maxBenefit << endl;
+            totalBeneficio += cluster->maxBenefit;
+        } else {
+            cout << "Cluster " << (i+1) << ";" << cluster->maxBenefit << ";" ;
             totalBeneficio += cluster->maxBenefit;
         }
 
@@ -867,12 +848,6 @@ void Graph::imprimeCluster(vector<Graph *> solucao, int option, float resultBene
 
         cout << endl;
     }
-
-    if (option == 2)
-    {
-        cout << std::setprecision(2) << std::fixed;
-    }
-    cout << "\n\nBeneficio final: " << totalBeneficio << endl;
 }
 
 void Graph::printNodes2()
@@ -891,45 +866,45 @@ void Graph::printNodes2()
     }
 }
 
-void Graph::printNodes()
-{
+void Graph::printNodes() {
     Node *node = this->first_node;
-    int cont = 0;
-
-    while (node != nullptr)
-    {
-        cout << node->getId() << ",";
+    while (node != nullptr) {
+        cout << node->getId();
+        if(node != this->getLastNode()) {
+            cout << " - ";
+        }
         node = node->getNextNode();
-        cont++;
     }
 }
 
-void Graph::output(string output_file, vector<Graph*> solution, float quality){
-    fstream output_File(output_file, ios::in);
+void Graph::output(ofstream &output_File, vector<Graph*> solution, float quality, double time, string filename){
+    // ofstream output_File = file;
 
-    output_File << "Solução da Clusterização: " << endl;
+    // output_File << "Solução da Clusterização: " << endl;
+    output_File << endl;
+    output_File << std::setprecision(3) << std::fixed;
+    output_File << "File; Time" << endl;
+    output_File << filename << ";" << time << endl;
+    output_File << "Cluster id;Cluster Benefit;Nodes" << endl;
 
     for (int i = 0; i < this->cluster; i++) {
         Graph *cluster = solution[i];
-        output_File << "=============== CLUSTER =============== " << endl;
-
-        output_File << "Beneficio do Cluster: " << cluster->maxBenefit << endl;
-
         Node *node = cluster->getFirstNode();
 
-        output_File << "Limite: " << cluster->inferiorLimit << " <->"/*<< cluster->getLimit << "<->"*/ << cluster->upperLimit << endl;
+        output_File << "Cluster " << (i+1) << ";"  << time << ";" << cluster->maxBenefit << ";";
 
-        output_File << "Nós do Cluster: " << endl;
         while (node != nullptr) {
-            output_File << node->getId() << ";";
+            output_File << node->getId();
+            if(node != this->getLastNode()) {
+                output_File << " - ";
+            }
             node = node->getNextNode();
         }
-
         output_File << endl;
     }
-    output_File << "Qualidade da solução: " << quality << "%" << endl;
+    // output_File << "Qualidade da solução: " << quality << "%" << endl;
 
-    cout << "O arquivo " << output_file << " foi gerado com sucesso.";
+    cout << "O arquivo foi gerado com sucesso." << endl;
 }
 
 double Graph::calculatePenalization(int id1, int id2, Graph *cluster) {

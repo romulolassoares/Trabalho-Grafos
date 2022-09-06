@@ -164,26 +164,26 @@ int menu() {
 
 void selecionar(ofstream &output_file,int selecao, Graph *graph) {
 
-    switch (selecao) {
-        case 1: {
-            graph->agmGuloso();
-            break;
-        }
+    // switch (selecao) {
+    //     case 1: {
+    //         graph->agmGuloso(output_file);
+    //         break;
+    //     }
 
-        case 2: {
-            graph->agmGulosoRandAdap();
-            break;
-        }
+    //     case 2: {
+    //         graph->agmGulosoRandAdap();
+    //         break;
+    //     }
 
-        case 3: {
-            graph->algGulosoReativo();
-            break;
-        }
+    //     case 3: {
+    //         graph->algGulosoReativo();
+    //         break;
+    //     }
 
-        default: {
-            cout << "Exit!!!" << endl;
-        }
-    }
+    //     default: {
+    //         cout << "Exit!!!" << endl;
+    //     }
+    // }
 }
 
 int mainMenu(ofstream &output_file,Graph *graph) {
@@ -234,7 +234,8 @@ int main(int argc, char const *argv[]) {
     ifstream input_file;
     ofstream output_file;
     input_file.open(argv[1], ios::in);
-    output_file.open(argv[2], ios::out | ios::trunc);
+    output_file.open(argv[2], ios::ios_base::app);
+    // output_file.open(argv[2], ios::out | ios::trunc);
     fileType = atoi(argv[3]);
 
     Graph *graph;
@@ -254,12 +255,13 @@ int main(int argc, char const *argv[]) {
              << " ms para ler o arquivo de entrada." << endl;
         // cout << graph << endl;
         // graph->printGraph();
-        graph->printGraphDot(output_file);
+        // graph->printGraphDot(output_file);
 
     } else
         cout << "Unable to open " << argv[1];
 
-    mainMenu(output_file, graph);
+    // mainMenu(output_file, graph);
+    graph->agmGuloso(output_file, argv[1]);
 
     //Fechando arquivo de entrada
     input_file.close();

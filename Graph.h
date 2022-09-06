@@ -71,14 +71,14 @@ class Graph {
         bool searchEdge(int id, int target_id);
 
         // Algoritimos Gulosos
-        void agmGuloso();
+        void agmGuloso(ofstream &file, string filename);
         void agmGulosoRandAdap();
         void algGulosoReativo();
 
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream &file);
-        void output(string output_file, vector<Graph*> solution, float quality);
+        void output(ofstream &output_File, vector<Graph*> solution, float quality, double time, string filename);
 
         double calculatePenalization(int id1, int id2, Graph *cluster);
 
