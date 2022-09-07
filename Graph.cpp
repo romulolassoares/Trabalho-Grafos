@@ -583,18 +583,18 @@ void Graph::agmGuloso() {
     // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
 }
 
-void Graph::agmGulosoRandAdap(){
+void Graph::agmGulosoRandAdap(float x){
     auto start = chrono::steady_clock::now();
 
     float melhor = 0;
     double resultado = 0;
     int criterio_parada=10;
-    float cof_randomizacao;
+    float cof_randomizacao = x;
 
     // cout << "Escolha um coeficiente de randomizacao: " << endl;
     // cin >> cof_randomizacao;
-    for (int i = 0; i < rand(); i++)
-        cof_randomizacao = 0 + (float) (rand()) / ((float) (RAND_MAX / (1 - 0)));
+    // for (int i = 0; i < rand(); i++)
+    //     cof_randomizacao = 0 + (float) (rand()) / ((float) (RAND_MAX / (1 - 0)));
 
     vector<Graph *> solution, best_solution;
 

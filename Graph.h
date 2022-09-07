@@ -71,7 +71,7 @@ class Graph {
 
         // Algoritimos Gulosos
         void agmGuloso();
-        void agmGulosoRandAdap();
+        void agmGulosoRandAdap(float x);
         void algGulosoReativo();
 
         //axiliar methods

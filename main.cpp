@@ -126,7 +126,7 @@ void selecionar(ofstream &output_file,int selecao, Graph *graph) {
             break;
         }
         case 2: {
-            graph->agmGulosoRandAdap();
+            // graph->agmGulosoRandAdap();
             break;
         }
         case 3: {
@@ -193,10 +193,15 @@ int main(int argc, char const *argv[]) {
     } else
         cout << "Unable to open " << argv[1];
 
-    // mainMenu(output_file, graph);
-    // graph->agmGuloso();
-    graph->agmGulosoRandAdap();
 
+
+    // mainMenu(output_file, graph);
+    cout << "------- GULOSO -------" << endl;
+    graph->agmGuloso();
+    cout << "------- GULOSO RANDOMIZADO ADAPTATIVO -------" << endl;
+    graph->agmGulosoRandAdap(stof(argv[4]));
+    cout << "------- GULOSO RANDOMIZADO REATIVO -------" << endl;
+    graph->algGulosoReativo();
     //Fechando arquivo de entrada
     input_file.close();
     //Fechando arquivo de saída
