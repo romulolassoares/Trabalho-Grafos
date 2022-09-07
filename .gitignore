@@ -5,5 +5,4 @@ execGrupoX
 *.zip
 *.txt
 *.dot
-run.sh
 !instancias/*.txt

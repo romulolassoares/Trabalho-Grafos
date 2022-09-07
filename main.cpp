@@ -153,7 +153,6 @@ int mainMenu(ofstream &output_file,Graph *graph) {
     return 0;
 }
 
-
 int main(int argc, char const *argv[]) {
     int fileType;
     srand(time(nullptr));
@@ -195,7 +194,8 @@ int main(int argc, char const *argv[]) {
         cout << "Unable to open " << argv[1];
 
     // mainMenu(output_file, graph);
-    graph->agmGuloso();
+    // graph->agmGuloso();
+    graph->agmGulosoRandAdap();
 
     //Fechando arquivo de entrada
     input_file.close();
