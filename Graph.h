@@ -80,7 +80,7 @@ class Graph {
         void output(string output_file, vector<Graph*> solution, float quality);
     private:
         vector<Graph*> guloso(bool random, double *result, float alfa);
-        double calculatePenalization(int id1, int id2, Graph *cluster);
+        double VerificaQualidade(int id1, int id2, Graph *cluster);
 
         float qualidadeSolucao(float resultadoObtido);
         Node* returnValidNode(float min, float max);
