@@ -382,7 +382,8 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
     vector<bool> visitedNodes;
     int countVisitedNodes = 0;
     vector<vector<bool>> visitedEdges;
-    // Preenche os veteros de nós visitados e e arestas visitadas
+    
+    // Preenche os vetores de nós visitados e arestas visitadas
     visitedEdges.resize(this->getOrder());
     for(int i = 0; i < this->getOrder(); i++) {
         visitedEdges.at(i).resize(this->getOrder());
@@ -404,7 +405,6 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 
         if(random) {
             node = this->returnValidNode(0.0f, alfa * (this->getOrder()- 1));
-            // position = (int)(rand() % (int)(alfa*this->getOrder()));
         } else {
             node = this->getNode(i);
         }
@@ -418,7 +418,6 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
         visitedNodes.at(position) = true;
         countVisitedNodes++;
 
-        // solution.at(i)->insertNodeAndWeight(node->getId(), node->getWeight());
         solution.at(i)->insertNodeAndWeight(position, node->getWeight());
         solution.at(i)->currentLimit += node->getWeight();
     }
@@ -589,7 +588,7 @@ void Graph::agmGulosoRandAdap(float x){
 
     float melhor = 0;
     double resultado = 0;
-    int criterio_parada= 10;
+    int criterio_parada = 10;
     float cof_randomizacao = x;
 
 
@@ -622,39 +621,113 @@ void Graph::agmGulosoRandAdap(float x){
     //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
 }
 
-float RandomAlfa(vector<float> &alfas) {
-    //usando a biblioteca random para gerar números mais aleatórios
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dis(0,9);
-    return alfas[dis(gen)];
+struct media {
+    float soma;
+    float numSolucoes;
+    float media;
+};
+
+//Função para pegar um alfa de acordo com a probabilidade
+float RandomAlfa(vector<float> &prob, vector<float> &alfas) {
+    float soma = 0;
+    int r = rand() % 101;
+
+    for (int i = 0; i < prob.size(); i++) {
+        soma += (prob[i] * 100);
+        if (soma >= r) {
+            return alfas[i];
+        }
+    }
+    return alfas[alfas.size() - 1];
+}
+
+void inicializandoVetor(vector<float> &prob, vector<media> &medias, vector<float> &MelhorSol, vector<float> &auxiliar, int numAlfas) {
+    media aux{0, 0, 1};
+    auto auxNumAlfas = numAlfas;
+
+    float auxProb = 1.0f / static_cast<float>(auxNumAlfas);
+
+    for (int i = 0; i < numAlfas; i++) {
+        auxiliar.push_back(0.00f);
+        MelhorSol.push_back(0.00f);
+        prob.push_back(auxProb);
+        medias.push_back(aux);
+    }
+}
+
+void updateMedias(vector<media> &medias, float solucao, vector<float> &alfas, float alfa) {
+    int aux = 0;
+    float auxSolucao;
+
+    auxSolucao = solucao;
+
+    for (int i = 0; i < alfas.size(); i++) {
+        if (alfa == alfas[i]) {
+            aux = i;
+            break;
+        }
+    }
+
+    medias[aux].soma = medias[aux].soma + auxSolucao;
+    medias[aux].numSolucoes++;
+    medias[aux].media = medias[aux].soma / medias[aux].numSolucoes;
+}
+
+//Atualizando as probabilidades
+void updateProbabilidades(vector<media> &medias, vector<float> &prob, vector<float> &solBest, vector<float> &auxiliar) {
+    float somaAuxiliar = 0;
+    float melhorSolucao = *(max_element(solBest.begin(), solBest.end()));
+
+    for (int i = 0; i < medias.size(); i++) {
+        auxiliar[i] = pow((melhorSolucao / medias[i].media), 2);
+        somaAuxiliar += auxiliar[i];
+    }
+
+    for (int i = 0; i < medias.size(); i++) {
+        prob[i] = auxiliar[i] / somaAuxiliar;
+    }
 }
 
 void Graph::algGulosoReativo() {
     auto start = chrono::steady_clock::now();
 
-    vector<float> alfas{0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.85f, 0.9f, 0.95f};
-    vector<Graph *> solution, melhorSol;
-    float MelhorSolution = 0;
-    float melhorBeneficio= 0;
+    vector<float> alfas{0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.85f, 0.9f, 0.95f}, MelhorSolucao, probabilidade, auxiliar;
+    vector<media> medias;
+    vector<Graph *> sol, melhorSol;
     int criterio_parada = 10;
+    float solucao, maiorBeneficio = 0;
     double result = 0;
 
-    for (int i = 1; i <= criterio_parada; i++) {
-        float cof_randomizado = RandomAlfa(alfas);
-        
-        result = 0;
-        cout << "Coeficiente de Randomização: " << cof_randomizado << endl;
-        solution = guloso(1, &result, cof_randomizado);
+    inicializandoVetor(probabilidade, medias, auxiliar, MelhorSolucao, alfas.size());
 
-        if (result > melhorBeneficio) {
-            melhorBeneficio = result;
-            melhorSol = solution;
-            MelhorSolution = melhorBeneficio;
+    for (int i = 1; i <= criterio_parada; i++) {
+        if (i % 50 == 0) {
+            updateProbabilidades(medias, probabilidade, MelhorSolucao, auxiliar);
         }
-        
-        for (auto &i : solution) {
-            delete i;
+
+        float cof_randomizacao = RandomAlfa(probabilidade, alfas);
+
+        cout << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
+
+        sol = guloso(1, &result, cof_randomizacao);
+
+        if (result > maiorBeneficio) {
+            maiorBeneficio = result;
+            melhorSol = sol;
+            MelhorSolucao[cof_randomizacao] = maiorBeneficio;
+        } else {
+            for (auto &j : sol) {
+                delete j;
+            }
+        }
+        updateMedias(medias, maiorBeneficio, alfas, cof_randomizacao);
+    }
+
+    //Procurando a melhor Solução
+    float auxMelhorSolucao = 0;
+    for (int i = 0; i < MelhorSolucao.size(); i++) {
+        if (MelhorSolucao[i] > auxMelhorSolucao) {
+            auxMelhorSolucao = MelhorSolucao[i];
         }
     }
 
@@ -664,14 +737,12 @@ void Graph::algGulosoReativo() {
             << chrono::duration_cast<chrono::milliseconds>(end - start).count()
             << " ms para executar." << endl;
             
-    cout << "Beneficio da Melhor Solucao: " << MelhorSolution << endl;
-    if (MelhorSolution > 0) {
+    cout << "Beneficio da Melhor Solucao: " << auxMelhorSolucao << endl;
+    if (auxMelhorSolucao > 0) {
         cout << "Conseguiu alguma solucao viavel" << endl;
     } else {
         cout << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
-    result = 0;
-    //output("AlgoritmoGulosoRandomizadoReativo.txt", melhorSol, qualidadeSolucao(auxSolBest));
 }
 
 float Graph::findDistanceBetween2Nodes(int node1, int node2) {
@@ -789,7 +860,7 @@ void Graph::output(string output_file, vector<Graph*> solution, float quality){
 
     for (int i = 0; i < this->cluster; i++) {
         Graph *cluster = solution[i];
-        output_File << "=============== CLUSTER =============== " << endl;
+        output_File << "************ CLUSTER ************ " << endl;
 
         output_File << "Beneficio do Cluster: " << cluster->maxBenefit << endl;
 
