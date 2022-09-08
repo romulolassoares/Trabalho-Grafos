@@ -621,11 +621,6 @@ void Graph::agmGulosoRandAdap(float x){
 
     //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
 }
-struct media {
-    float soma;
-    float numSolucoes;
-    float media;
-};
 
 float RandomAlfa(vector<float> &alfas) {
     //usando a biblioteca random para gerar números mais aleatórios
@@ -635,39 +630,16 @@ float RandomAlfa(vector<float> &alfas) {
     return alfas[dis(gen)];
 }
 
-void atualizaMedias(vector<media> &medias, float solucao, vector<float> &alfas, float alfa) {
-    size_t aux = 0;
-    for (size_t i = 0; i < alfas.size(); i++) {
-        if (alfa == alfas[i]) {
-            aux = i;
-            break;
-        }
-    }
-    medias[aux].soma = medias[aux].soma + solucao;
-    medias[aux].numSolucoes++;
-    medias[aux].media = medias[aux].soma / medias[aux].numSolucoes;
-}
-
-
 void Graph::algGulosoReativo() {
     auto start = chrono::steady_clock::now();
 
-    vector<float> alfas{0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.85f, 0.9f, 0.95f}, MelhorSolution, auxiliar;
-    vector<media> medias;
+    vector<float> alfas{0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.85f, 0.9f, 0.95f};
     vector<Graph *> solution, melhorSol;
+    float MelhorSolution = 0;
+    float melhorBeneficio= 0;
     int criterio_parada = 10;
-    float solucao, melhorBeneficio= 0;
     double result = 0;
 
-
-    for (int i = 0; i < alfas.size(); i++) {
-        auxiliar.push_back(0.00f);
-        MelhorSolution.push_back(0.00f);
-    }
-    media aux{0, 0, 1};
-    for (int i = 0; i < alfas.size(); i++) {
-        medias.push_back(aux);
-    }
     for (int i = 1; i <= criterio_parada; i++) {
         float cof_randomizado = RandomAlfa(alfas);
         
@@ -678,27 +650,22 @@ void Graph::algGulosoReativo() {
         if (result > melhorBeneficio) {
             melhorBeneficio = result;
             melhorSol = solution;
-            MelhorSolution[cof_randomizado] = melhorBeneficio;
+            MelhorSolution = melhorBeneficio;
         }
+        
         for (auto &i : solution) {
             delete i;
         }
-        atualizaMedias(medias, melhorBeneficio, alfas, cof_randomizado);
     }
-    float auxMelhorSolution = 0;
-    for (int i = 0; i < MelhorSolution.size(); i++) {
-        if (MelhorSolution[i] > auxMelhorSolution) {
-            auxMelhorSolution = MelhorSolution[i];
-        }
-    }
+
     cout << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
     cout << "Demorou  "
             << chrono::duration_cast<chrono::milliseconds>(end - start).count()
             << " ms para executar." << endl;
             
-    cout << "Beneficio da Melhor Solucao: " << auxMelhorSolution << endl;
-    if (auxMelhorSolution > 0) {
+    cout << "Beneficio da Melhor Solucao: " << MelhorSolution << endl;
+    if (MelhorSolution > 0) {
         cout << "Conseguiu alguma solucao viavel" << endl;
     } else {
         cout << "Nao conseguiu nenhuma solucao viavel" << endl;
