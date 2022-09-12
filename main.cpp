@@ -103,56 +103,6 @@ Graph *leituraHandover(ifstream &input_file) {
     return graph;
 }
 
-int menu() {
-
-    int selecao;
-    cout << endl;
-    cout << "   ------  MENU ------" << endl;
-    cout << "[1] Algoritmo construtivo guloso" << endl;
-    cout << "[2] Algoritmo construtivo guloso randomizado e adaptativo" << endl;
-    cout << "[3] Algoritmo construtivo guloso randomizado reativo" << endl;
-    cout << "[4] Sair" << endl;
-
-    cin >> selecao;
-
-    return selecao;
-
-}
-
-void selecionar(ofstream &output_file,int selecao, Graph *graph) {
-    switch (selecao) {
-        case 1: {
-            graph->agmGuloso();
-            break;
-        }
-        case 2: {
-            // graph->agmGulosoRandAdap();
-            break;
-        }
-        case 3: {
-            graph->algGulosoReativo();
-            break;
-        }
-        default: {
-            cout << "Exit!!!" << endl;
-        }
-    }
-}
-
-int mainMenu(ofstream &output_file,Graph *graph) {
-    int selecao = menu();
-    while (selecao != 4) {
-
-        if (output_file.is_open())
-            selecionar(output_file,selecao, graph);
-        else
-            cout << "Unable to open the output_file" << endl;
-        output_file << endl;
-        selecao = menu();
-    }
-    return 0;
-}
-
 int main(int argc, char const *argv[]) {
     int fileType;
     srand(time(nullptr));
@@ -168,7 +118,7 @@ int main(int argc, char const *argv[]) {
 
     //Abrindo arquivo de entrada
     ifstream input_file;
-    ofstream output_file;
+    fstream output_file;
     input_file.open(argv[1], ios::in);
     output_file.open(argv[2], ios::out | ios::trunc);
     fileType = atoi(argv[3]);
@@ -194,14 +144,13 @@ int main(int argc, char const *argv[]) {
         cout << "Unable to open " << argv[1];
 
 
+    output_file << "------- GULOSO -------" << endl;
+    graph->agmGuloso(output_file);
+    output_file << "------- GULOSO RANDOMIZADO ADAPTATIVO -------" << endl;
+    graph->agmGulosoRandAdap(stof(argv[4]), output_file);
+    output_file << "------- GULOSO RANDOMIZADO REATIVO -------" << endl;
+    graph->algGulosoReativo(output_file);
 
-    // mainMenu(output_file, graph);
-    cout << "------- GULOSO -------" << endl;
-    graph->agmGuloso();
-    cout << "------- GULOSO RANDOMIZADO ADAPTATIVO -------" << endl;
-    graph->agmGulosoRandAdap(stof(argv[4]));
-    cout << "------- GULOSO RANDOMIZADO REATIVO -------" << endl;
-    graph->algGulosoReativo();
     //Fechando arquivo de entrada
     input_file.close();
     //Fechando arquivo de saída

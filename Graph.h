@@ -31,7 +31,6 @@ class Graph {
         int cluster;
         string clusterType;
         vector<tuple<int, int>> clustersLimits;
-        // double clustersCapacity;
         float inferiorLimit;
         float upperLimit;
         float currentLimit;
@@ -70,14 +69,14 @@ class Graph {
         bool searchEdge(int id, int target_id);
 
         // Algoritimos Gulosos
-        void agmGuloso();
-        void agmGulosoRandAdap(float x);
-        void algGulosoReativo();
+        void agmGuloso(fstream &output_file);
+        void agmGulosoRandAdap(float x, fstream &output_file);
+        void algGulosoReativo(fstream &output_file);
 
         //axiliar methods
         void printGraph();
         void printGraphDot(ofstream &file);
-        void output(string output_file, vector<Graph*> solution, float quality);
+
     private:
         vector<Graph*> guloso(bool random, double *result, float alfa);
         double VerificaQualidade(int id1, int id2, Graph *cluster);

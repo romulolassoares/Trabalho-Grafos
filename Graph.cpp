@@ -556,33 +556,27 @@ vector<Graph*> Graph::guloso(bool random, double *result, float alfa) {
 }
 
 // GULOSOS
-void Graph::agmGuloso() {
-    cout << std::setprecision(2) << std::fixed;
+void Graph::agmGuloso(fstream &output_file) {
+    output_file << std::setprecision(2) << std::fixed;
     auto start = chrono::steady_clock::now();
 
     double result = 0;
     vector<Graph*> sol = guloso(0, &result, 0);
 
     auto end = chrono::steady_clock::now();
-    cout << "Demorou  "
+    output_file << "Demorou  "
             << chrono::duration_cast<chrono::milliseconds>(end - start).count()
             << " ms para executar." << endl;
-    // cout << "Qualidade Solucao: " << qualidadeSolucao(result) << "%" << endl;
 
-    cout << "Qualidade Obtida: " << result << endl;
+    output_file << "Qualidade Obtida: " << result << endl;
     if (result > 0) {
-        cout << "Conseguiu alguma solucao viavel" << endl;
+        output_file << "Conseguiu alguma solucao viavel" << endl;
     } else {
-        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
+        output_file << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
-
-    // imprimeCluster(sol, 2, result);
-
-    // imprimeCluster(sol, 2, result);
-    // output("AlgoritmoGuloso.txt", sol, qualidadeSolucao(result));
 }
 
-void Graph::agmGulosoRandAdap(float x){
+void Graph::agmGulosoRandAdap(float x, fstream &output_file){
     auto start = chrono::steady_clock::now();
 
     float melhor = 0;
@@ -593,28 +587,27 @@ void Graph::agmGulosoRandAdap(float x){
 
     vector<Graph *> solution, best_solution;
 
-    cout << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
+    output_file << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
 
     for (int i = 0; i < criterio_parada; i++) {
         solution = guloso(1, &resultado,  cof_randomizacao);
-        // cout << "i:" << i << endl;
         if (resultado > melhor) {
             melhor = resultado;
             best_solution = solution;
         }
     }
 
-    cout << std::setprecision(2) << std::fixed;
+    output_file << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
-    cout << "Demorou  "
+    output_file << "Demorou  "
             << chrono::duration_cast<chrono::milliseconds>(end - start).count()
             << " ms para executar." << endl;
 
-    cout << "Beneficio da melhor solucao: " << melhor <<endl;
+    output_file << "Beneficio da melhor solucao: " << melhor <<endl;
     if (melhor > 0) {
-        cout << "O guloso randomizado obteve alguma solucao viavel" << endl;
+        output_file << "O guloso randomizado obteve alguma solucao viavel" << endl;
     } else {
-        cout << "O guloso randomizado reativo nao obteve nenhuma solucao viavel" << endl;
+        output_file << "O guloso randomizado reativo nao obteve nenhuma solucao viavel" << endl;
     }
 
     //output("AlgoritmoGulosoRandomizadoAdaptativo.txt", melhorSol, qualidadeSolucao(maior));
@@ -687,13 +680,13 @@ void updateProbabilidades(vector<media> &medias, vector<float> &prob, vector<flo
     }
 }
 
-void Graph::algGulosoReativo() {
+void Graph::algGulosoReativo(fstream &output_file) {
     auto start = chrono::steady_clock::now();
 
     vector<float> alfas{0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.85f, 0.9f, 0.95f}, MelhorSolucao, probabilidade, auxiliar;
     vector<media> medias;
     vector<Graph *> sol, melhorSol;
-    int criterio_parada = 10;
+    int criterio_parada = 500;
     float solucao, maiorBeneficio = 0;
     double result = 0;
 
@@ -706,7 +699,7 @@ void Graph::algGulosoReativo() {
 
         float cof_randomizacao = RandomAlfa(probabilidade, alfas);
 
-        cout << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
+        output_file << "Coeficiente de randomizacao: " << cof_randomizacao << endl;
 
         sol = guloso(1, &result, cof_randomizacao);
 
@@ -730,17 +723,17 @@ void Graph::algGulosoReativo() {
         }
     }
 
-    cout << std::setprecision(2) << std::fixed;
+    output_file << std::setprecision(2) << std::fixed;
     auto end = chrono::steady_clock::now();
-    cout << "Demorou  "
+    output_file << "Demorou  "
             << chrono::duration_cast<chrono::milliseconds>(end - start).count()
             << " ms para executar." << endl;
             
-    cout << "Beneficio da Melhor Solucao: " << auxMelhorSolucao << endl;
+    output_file << "Beneficio da Melhor Solucao: " << auxMelhorSolucao << endl;
     if (auxMelhorSolucao > 0) {
-        cout << "Conseguiu alguma solucao viavel" << endl;
+        output_file << "Conseguiu alguma solucao viavel" << endl;
     } else {
-        cout << "Nao conseguiu nenhuma solucao viavel" << endl;
+        output_file << "Nao conseguiu nenhuma solucao viavel" << endl;
     }
 }
 
@@ -850,34 +843,6 @@ void Graph::printNodes()
         node = node->getNextNode();
         cont++;
     }
-}
-
-void Graph::output(string output_file, vector<Graph*> solution, float quality){
-    fstream output_File(output_file, ios::in);
-
-    output_File << "Solução da Clusterização: " << endl;
-
-    for (int i = 0; i < this->cluster; i++) {
-        Graph *cluster = solution[i];
-        output_File << "************ CLUSTER ************ " << endl;
-
-        output_File << "Beneficio do Cluster: " << cluster->maxBenefit << endl;
-
-        Node *node = cluster->getFirstNode();
-
-        output_File << "Limite: " << cluster->inferiorLimit << " <->"/*<< cluster->getLimit << "<->"*/ << cluster->upperLimit << endl;
-
-        output_File << "Nós do Cluster: " << endl;
-        while (node != nullptr) {
-            output_File << node->getId() << ";";
-            node = node->getNextNode();
-        }
-
-        output_File << endl;
-    }
-    output_File << "Qualidade da solução: " << quality << "%" << endl;
-
-    cout << "O arquivo " << output_file << " foi gerado com sucesso.";
 }
 
 double Graph::VerificaQualidade(int id1, int id2, Graph *cluster) {
